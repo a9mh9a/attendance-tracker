@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Attendance & Overtime Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial, sans-serif; background: #f4f6f9; margin:0; padding:20px; }
+h1,h2 { text-align:center; }
+table { width: 100%; border-collapse: collapse; margin:20px 0; background:#fff; display: block; overflow-x:auto; }
+th, td { border:1px solid #ddd; padding:10px; text-align:center; }
+th { background:#007BFF; color:white; }
+.workday { background:#d4edda; color:#155724; }
+.holiday { background:#f8d7da; color:#721c24; }
+button { padding:10px 20px; margin:10px 0; background:#007BFF; border:none; color:white; border-radius:5px; cursor:pointer; width:100%; box-sizing:border-box; }
+button:hover { background:#0056b3; }
+#loginForm,#overtimeForm { max-width:400px; margin:20px auto; padding:20px; background:#fff; border:1px solid #ddd; border-radius:8px; }
+input, select, label { display:block; margin:10px 0; width:100%; box-sizing:border-box; }
+#greeting { text-align:center; margin:10px 0; font-size:1.2em; font-weight:bold; }
+#resetBtn { background:#dc3545; }
+
+@media (max-width: 600px) {
+  h1, h2 { font-size: 1.2em; }
+  table th, table td { padding: 8px; font-size: 0.9em; }
+  button { padding: 8px 15px; font-size: 0.9em; }
+}
+</style>
+</head>
+<body>
+
+<h1>📅 Attendance & Overtime Tracker</h1>
+
+<div id="loginForm">
+  <h2>تسجيل حساب جديد</h2>
+  <label>الاسم:</label>
+  <input type="text" id="username">
+  <label>الدور:</label>
+  <select id="role">
+    <option value="مهندس">مهندس</option>
+    <option value="فني">فني</option>
+  </select>
+  <label>أول يوم دوام:</label>
+  <input type="date" id="firstWorkDay">
+  <button id="registerBtn">سجل</button>
+</div>
+
+<div id="greeting"></div>
+
+<button id="overtimeBtn" style="display:none;" onclick="scrollToOvertime()">➕ إضافة Overtime</button>
+<button id="resetBtn" style="display:none;">🔄 إعادة تسجيل الدخول</button>
+
+<table id="attendanceTable" style="display:none;">
+<thead>
+<tr><th>التاريخ</th><th>الحالة</th><th>✔️ حضور</th></tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<div id="overtimeForm" style="display:none;">
+<h2>إضافة Overtime</h2>
+<label>التاريخ:</label>
+<input type="date" id="otDate">
+<label>الساعات:</label>
+<input type="number" id="otHours" min="1">
+<button id="saveOTBtn">حفظ</button>
+</div>
+
+<h2 id="otHeader" style="display:none;">🕒 قائمة Overtime</h2>
+<table id="overtimeTable" style="display:none;">
+<thead><tr><th>التاريخ</th><th>الساعات</th></tr></thead>
+<tbody></tbody>
+</table>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const attendanceKey = "attendanceData";
+  const overtimeKey = "overtimeData";
+  const userKey = "userData";
+
+  let attendanceData = JSON.parse(localStorage.getItem(attendanceKey)) || {};
+  let overtimeData = JSON.parse(localStorage.getItem(overtimeKey)) || [];
+  let userData = JSON.parse(localStorage.getItem(userKey));
+
+  const loginForm = document.getElementById("loginForm");
+  const registerBtn = document.getElementById("registerBtn");
+  const greetingDiv = document.getElementById("greeting");
+  const attendanceTable = document.getElementById("attendanceTable");
+  const overtimeBtn = document.getElementById("overtimeBtn");
+  const otHeader = document.getElementById("otHeader");
+  const overtimeTable = document.getElementById("overtimeTable");
+  const overtimeForm = document.getElementById("overtimeForm");
+  const saveOTBtn = document.getElementById("saveOTBtn");
+  const resetBtn = document.getElementById("resetBtn");
+
+  function showGreeting(){
+    const now = new Date();
+    const hour = now.getHours();
+    let greeting = hour < 12 ? "صباح الخير" : "مساء الخير";
+    greetingDiv.textContent = `${greeting} ${userData.role} ${userData.name}`;
+  }
+
+  function generateSchedule(){
+    const tbody = document.querySelector("#attendanceTable tbody");
+    tbody.innerHTML = "";
+    let startDate = new Date(userData.firstWorkDay);
+    const month = startDate.getMonth();
+    let dayCounter = 0;
+    let work = true;
+
+    while(startDate.getMonth() === month){
+      let status = work ? "Workday" : "Holiday";
+      let row = document.createElement("tr");
+      row.innerHTML = `<td>${startDate.toISOString().split("T")[0]}</td>
+                       <td class="${work ? 'workday':'holiday'}">${status}</td>
+                       <td>${work ? `<input type="checkbox" data-date="${startDate.toISOString().split("T")[0]}">`:"❌"}</td>`;
+      tbody.appendChild(row);
+
+      const cb = row.querySelector("input[type='checkbox']");
+      if(cb && attendanceData[startDate.toISOString().split("T")[0]]) cb.checked = true;
+      if(cb) cb.addEventListener("change",()=> {
+        attendanceData[cb.dataset.date]=cb.checked;
+        localStorage.setItem(attendanceKey,JSON.stringify(attendanceData));
+      });
+
+      // دوام يوم → عطلة يومين
+      if(work){ work=false; } 
+      else { work = (dayCounter % 3 === 2) ? true : false; }
+      dayCounter++;
+      startDate.setDate(startDate.getDate()+1);
+    }
+    renderOvertime();
+  }
+
+  window.scrollToOvertime = function() {
+    overtimeForm.style.display = "block"; // فتح الفورم إذا مخفي
+    overtimeForm.scrollIntoView({ behavior: "smooth" }); // الانتقال للفورم
+  }
+
+  function saveOvertime(){
+    const date = document.getElementById("otDate").value;
+    const hours = document.getElementById("otHours").value;
+    if(!date||!hours){ alert("اكمل البيانات"); return; }
+    overtimeData.push({date,hours});
+    localStorage.setItem(overtimeKey,JSON.stringify(overtimeData));
+    document.getElementById("otDate").value="";
+    document.getElementById("otHours").value="";
+    renderOvertime();
+    overtimeForm.style.display="none";
+  }
+
+  function renderOvertime(){
+    const tbody = document.querySelector("#overtimeTable tbody");
+    tbody.innerHTML="";
+    if(overtimeData.length===0){
+      otHeader.style.display="none";
+      overtimeTable.style.display="none";
+      return;
+    }
+    otHeader.style.display="block";
+    overtimeTable.style.display="table";
+    overtimeData.forEach(item=>{
+      const row = document.createElement("tr");
+      row.innerHTML=`<td>${item.date}</td><td>${item.hours}</td>`;
+      tbody.appendChild(row);
+    });
+  }
+
+  function loginUser(name, role, firstWorkDay){
+    userData = {name, role, firstWorkDay};
+    localStorage.setItem(userKey, JSON.stringify(userData));
+    loginForm.style.display = "none";
+    attendanceTable.style.display = "table";
+    overtimeBtn.style.display = "inline-block";
+    resetBtn.style.display = "inline-block";
+    showGreeting();
+    generateSchedule();
+  }
+
+  registerBtn.addEventListener("click", () => {
+    const name = document.getElementById("username").value.trim();
+    const role = document.getElementById("role").value;
+    const firstWorkDay = document.getElementById("firstWorkDay").value;
+    if(!name || !firstWorkDay){ alert("اكمل البيانات"); return; }
+    loginUser(name, role, firstWorkDay);
+  });
+
+  saveOTBtn.addEventListener("click", saveOvertime);
+
+  resetBtn.addEventListener("click", () => {
+    // حذف كل البيانات المخزنة
+    localStorage.removeItem(userKey);
+    localStorage.removeItem(attendanceKey);
+    localStorage.removeItem(overtimeKey);
+
+    // إخفاء العناصر
+    attendanceTable.style.display = "none";
+    overtimeForm.style.display = "none";
+    overtimeTable.style.display = "none";
+    otHeader.style.display = "none";
+    overtimeBtn.style.display = "none";
+    resetBtn.style.display = "none";
+    greetingDiv.textContent = "";
+
+    // إظهار تسجيل الدخول
+    loginForm.style.display = "block";
+    userData = null;
+    attendanceData = {};
+    overtimeData = [];
+  });
+
+  if(userData){
+    loginForm.style.display = "none";
+    attendanceTable.style.display = "table";
+    overtimeBtn.style.display = "inline-block";
+    resetBtn.style.display = "inline-block";
+    showGreeting();
+    generateSchedule();
+  }
+});
+</script>
+</body>
+</html>
