@@ -3,26 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <title>Attendance & Overtime Tracker</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
-body { font-family: Arial, sans-serif; background: #f4f6f9; margin:0; padding:20px; }
+body { font-family: Arial, sans-serif; background: #f4f6f9; margin:0; padding:0; }
 h1,h2 { text-align:center; }
-table { width: 100%; border-collapse: collapse; margin:20px 0; background:#fff; display: block; overflow-x:auto; }
+table { width: 100%; border-collapse: collapse; margin:20px auto; background:#fff; display: block; overflow-x:auto; }
 th, td { border:1px solid #ddd; padding:10px; text-align:center; }
 th { background:#007BFF; color:white; }
 .workday { background:#d4edda; color:#155724; }
 .holiday { background:#f8d7da; color:#721c24; }
 button { padding:10px 20px; margin:10px 0; background:#007BFF; border:none; color:white; border-radius:5px; cursor:pointer; width:100%; box-sizing:border-box; }
 button:hover { background:#0056b3; }
-#loginForm,#overtimeForm { max-width:400px; margin:20px auto; padding:20px; background:#fff; border:1px solid #ddd; border-radius:8px; }
+#loginForm,#overtimeForm { max-width:400px; margin:20px auto; padding:20px; background:#fff; border:1px solid #ddd; border-radius:8px; text-align:center; }
 input, select, label { display:block; margin:10px 0; width:100%; box-sizing:border-box; }
 #greeting { text-align:center; margin:10px 0; font-size:1.2em; font-weight:bold; }
 #resetBtn { background:#dc3545; }
+
+#loginForm {
+  background-image: url('img/لوقان.jpg');
+  background-size: cover;
+  background-position: center;
+  color: #000;
+}
+
+.logo {
+  width: 120px;
+  margin: 0 auto 15px auto;
+  display: block;
+}
 
 @media (max-width: 600px) {
   h1, h2 { font-size: 1.2em; }
   table th, table td { padding: 8px; font-size: 0.9em; }
   button { padding: 8px 15px; font-size: 0.9em; }
+  #attendanceTable tbody, #attendanceTable tr, #attendanceTable td {
+    display: block;
+    text-align: center;
+  }
 }
 </style>
 </head>
@@ -31,6 +48,7 @@ input, select, label { display:block; margin:10px 0; width:100%; box-sizing:bord
 <h1>📅 Attendance & Overtime Tracker</h1>
 
 <div id="loginForm">
+  <img src="img/لوكو.png" alt="Logo" class="logo">
   <h2>تسجيل حساب جديد</h2>
   <label>الاسم:</label>
   <input type="text" id="username">
@@ -187,12 +205,10 @@ document.addEventListener("DOMContentLoaded", () => {
   saveOTBtn.addEventListener("click", saveOvertime);
 
   resetBtn.addEventListener("click", () => {
-    // حذف كل البيانات المخزنة
     localStorage.removeItem(userKey);
     localStorage.removeItem(attendanceKey);
     localStorage.removeItem(overtimeKey);
 
-    // إخفاء العناصر
     attendanceTable.style.display = "none";
     overtimeForm.style.display = "none";
     overtimeTable.style.display = "none";
@@ -201,7 +217,6 @@ document.addEventListener("DOMContentLoaded", () => {
     resetBtn.style.display = "none";
     greetingDiv.textContent = "";
 
-    // إظهار تسجيل الدخول
     loginForm.style.display = "block";
     userData = null;
     attendanceData = {};
