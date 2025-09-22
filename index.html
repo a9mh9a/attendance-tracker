@@ -16,6 +16,114 @@
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAWlBMVEUAAAD///////////////////////////////////////////////////////////8gJSjZAAAAHnRSTlMAgECQwCCQYCDw8JAgQJBwQGCgQPDQ0JBQYDCgUGCrCbbpAAAAmElEQVQ4y2NggAIGBkYGFhZWNnYOBkZObh5ePn4BQSFhEVExcQlJKQZJaRlZOXkFRSUVVTU1dQ1NBi1tHV09fQNDI2MTUzNzC0srBmsbWzt7B0cnZxdXN3cPTwYvbx9fP/+AwKDgkNCw8AhGhsiocEDh6JjYuPgERgYgSEpOSU1Lz8jMys5hYGjty88vKCwqLiktYwAAnIsW+WlW9q0AAAAASUVORK5CYII=">
 <link rel="icon" type="image/png" href="img/favicon.png">
 <style>
+
+/* =======================
+   Reset بسيط لجميع العناصر
+======================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* =======================
+   إعدادات الجسم والخلفية
+======================= */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    line-height: 1.5;
+    color: #333;
+    padding: 10px;
+}
+
+/* =======================
+   الهيدر
+======================= */
+header {
+    background-color: #2196f3;
+    color: white;
+    text-align: center;
+    padding: 15px 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* =======================
+   الحاوية الرئيسية
+======================= */
+.container {
+    width: 95%;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* =======================
+   الأزرار
+======================= */
+button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    font-size: 16px;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0b7dda;
+}
+
+/* =======================
+   العناصر المتجاوبة
+======================= */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* =======================
+   Media Queries للشاشات الصغيرة
+======================= */
+@media (max-width: 600px) {
+    header {
+        font-size: 18px;
+        padding: 12px;
+    }
+    button {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
+
+/* =======================
+   Media Queries للشاشات الأكبر
+======================= */
+@media (min-width: 601px) {
+    header {
+        font-size: 24px;
+    }
+    button {
+        font-size: 16px;
+        width: auto;
+        padding: 12px 20px;
+    }
+}
+
+
+
+
 :root {
   --primary-color: #007BFF;
   --secondary-color: #0056b3;
