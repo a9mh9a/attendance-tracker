@@ -5,7 +5,6 @@
 <title>Attendance & Overtime Tracker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAWlBMVEUAAAD///////////////////////////////////////////////////////////8gJSjZAAAAHnRSTlMAgECQwCCQYCDw8JAgQJBwQGCgQPDQ0JBQYDCgUGCrCbbpAAAAmElEQVQ4y2NggAIGBkYGFhZWNnYOBkZObh5ePn4BQSFhEVExcQlJKQZJaRlZOXkFRSUVVTU1dQ1NBi1tHV09fQNDI2MTUzNzC0srBmsbWzt7B0cnZxdXN3cPTwYvbx9fP/+AwKDgkNCw8AhGhsiocEDh6JjYuPgERgYgSEpOSU1Lz8jMys5hYGjty88vKCwqLiktYwAAnIsW+WlW9q0AAAAASUVORK5CYII=">
-<link rel="icon" type="image/png" href="img/favicon.png">
 <style>
 :root {
   --primary-color: #007BFF;
@@ -512,7 +511,7 @@ body.dark select {
 <body>
 
 <div class="container">
-  <h1>📅 متتبع الحضور الخاص </h1>
+  <h1>📅 متتبع الحضور والوقت الإضافي</h1>
 
   <div id="loginForm" class="card form-card">
     <h2>تسجيل حساب جديد</h2>
