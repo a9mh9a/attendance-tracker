@@ -17,109 +17,45 @@
 <link rel="icon" type="image/png" href="img/favicon.png">
 <style>
 
-/* =======================
-   Reset بسيط لجميع العناصر
-======================= */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+
+
 
 /* =======================
-   إعدادات الجسم والخلفية
+   تفعيل التوافق مع الشاشات الصغيرة
 ======================= */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    line-height: 1.5;
-    color: #333;
-    padding: 10px;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
-/* =======================
-   الهيدر
-======================= */
-header {
-    background-color: #2196f3;
-    color: white;
-    text-align: center;
-    padding: 15px 10px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-/* =======================
-   الحاوية الرئيسية
-======================= */
-.container {
-    width: 95%;
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-/* =======================
-   الأزرار
-======================= */
-button {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    font-size: 16px;
-    background-color: #2196f3;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #0b7dda;
-}
-
-/* =======================
-   العناصر المتجاوبة
-======================= */
+/* الصور تصبح مرنة */
 img {
     max-width: 100%;
     height: auto;
-    display: block;
-    margin: 0 auto;
 }
 
-/* =======================
-   Media Queries للشاشات الصغيرة
-======================= */
+/* نصوص الحاويات تتكيف */
+.container, header, main, footer {
+    width: 100%;
+    box-sizing: border-box;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* الأزرار تبقى بنفس مكانها لكن لا تتجاوز الشاشة */
+button {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Media query للموبايل أصغر من 600px */
 @media (max-width: 600px) {
-    header {
-        font-size: 18px;
-        padding: 12px;
-    }
-    button {
-        font-size: 14px;
-        padding: 10px;
+    body {
+        font-size: 16px; /* نصوص قابلة للقراءة */
     }
 }
 
-/* =======================
-   Media Queries للشاشات الأكبر
-======================= */
-@media (min-width: 601px) {
-    header {
-        font-size: 24px;
-    }
-    button {
-        font-size: 16px;
-        width: auto;
-        padding: 12px 20px;
-    }
-}
+
 
 
 
