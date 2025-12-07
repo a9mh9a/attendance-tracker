@@ -2,1079 +2,2914 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<!-- تفعيل وضع الشاشة الكاملة على iOS -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<!-- أيقونة الموقع عند إضافة الشاشة الرئيسية -->
-<link rel="apple-touch-icon" href="img/favicon.png">
-<!-- اختيار اسم الموقع عند إضافة الشاشة الرئيسية -->
-<meta name="apple-mobile-web-app-title" content="اسم موقعك">
-<!-- لون شريط الحالة عند فتح التطبيق -->
-<meta name="theme-color" content="#ffffff">
-<title>Attendance & Overtime Tracker</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#007BFF">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAWlBMVEUAAAD///////////////////////////////////////////////////////////8gJSjZAAAAHnRSTlMAgECQwCCQYCDw8JAgQJBwQGCgQPDQ0JBQYDCgUGCrCbbpAAAAmElEQVQ4y2NggAIGBkYGFhZWNnYOBkZObh5ePn4BQSFhEVExcQlJKQZJaRlZOXkFRSUVVTU1dQ1NBi1tHV09fQNDI2MTUzNzC0srBmsbWzt7B0cnZxdXN3cPTwYvbx9fP/+AwKDgkNCw8AhGhsiocEDh6JjYuPgERgYgSEpOSU1Lz8jMys5hYGjty88vKCwqLiktYwAAnIsW+WlW9q0AAAAASUVORK5CYII=">
 <link rel="icon" type="image/png" href="img/favicon.png">
+<title>نظام متابعة الحضور</title>
 <style>
-
-
-
-
-/* =======================
-   تفعيل التوافق مع الشاشات الصغيرة
-======================= */
-body {
-    max-width: 100%;
-    overflow-x: hidden;
-}
-
-/* الصور تصبح مرنة */
-img {
-    max-width: 100%;
-    height: auto;
-}
-
-/* نصوص الحاويات تتكيف */
-.container, header, main, footer {
-    width: 100%;
-    box-sizing: border-box;
-    padding-left: 10px;
-    padding-right: 10px;
-}
-
-/* الأزرار تبقى بنفس مكانها لكن لا تتجاوز الشاشة */
-button {
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-/* Media query للموبايل أصغر من 600px */
-@media (max-width: 600px) {
-    body {
-        font-size: 16px; /* نصوص قابلة للقراءة */
-    }
-}
-
-
-
-
-
-
+/* =============== الأساسيات =============== */
 :root {
-  --primary-color: #007BFF;
-  --secondary-color: #0056b3;
-  --success-color: #28a745;
-  --danger-color: #dc3545;
-  --warning-color: #ffc107;
-  --info-color: #17a2b8;
-  --text-color: #000;
-  --bg-color: #f4f6f9;
-  --card-bg: rgba(255, 255, 255, 0.9);
-  --border-color: #ddd;
-  --shadow: 0 2px 10px rgba(0,0,0,0.1);
+  --primary: #007AFF;
+  --primary-dark: #0056CC;
+  --secondary: #5856D6;
+  --success: #34C759;
+  --danger: #FF3B30;
+  --warning: #FF9500;
+  --info: #5AC8FA;
+  --dark: #1C1C1E;
+  --light: #F2F2F7;
+  --gray: #8E8E93;
+  --border: #C7C7CC;
+  --card-bg: #FFFFFF;
+  --shadow: rgba(0,0,0,0.1);
 }
-body.dark {
-  --bg-color: #121212;
-  --card-bg: rgba(30, 30, 30, 0.9);
-  --text-color: #eee;
-  --border-color: #444;
-  --shadow: 0 2px 10px rgba(0,0,0,0.3);
+
+.dark-mode {
+  --primary: #0A84FF;
+  --primary-dark: #409CFF;
+  --secondary: #5E5CE6;
+  --success: #30D158;
+  --danger: #FF453A;
+  --warning: #FF9F0A;
+  --info: #64D2FF;
+  --dark: #FFFFFF;
+  --light: #1C1C1E;
+  --gray: #98989D;
+  --border: #38383A;
+  --card-bg: #2C2C2E;
+  --shadow: rgba(0,0,0,0.3);
 }
 
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: var(--bg-color);
-  color: var(--text-color);
-  margin: 0; 
-  padding: 20px;
-  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--light);
+  color: var(--dark);
   line-height: 1.6;
-  position: relative;
   min-height: 100vh;
-  padding-bottom: 60px; /* مساحة للتذييل */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  transition: background 0.3s, color 0.3s;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
+/* =============== الشريط العلوي =============== */
+.header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 60px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
   padding: 0 15px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px var(--shadow);
 }
 
-h1, h2, h3 {
+.header-title {
+  flex: 1;
   text-align: center;
-  margin-top: 0;
-  color: var(--primary-color);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary);
 }
 
+.header-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--dark);
+  padding: 8px;
+  cursor: pointer;
+}
+
+/* =============== الصفحات =============== */
+.page {
+  display: none;
+  padding: 80px 15px 70px;
+  min-height: 100vh;
+  animation: fadeIn 0.3s ease;
+}
+
+.page.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =============== البطاقات =============== */
 .card {
   background: var(--card-bg);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border-color);
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px var(--shadow);
+  border: 1px solid var(--border);
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 20px 0;
-  background: var(--card-bg);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
-th, td {
-  border: 1px solid var(--border-color);
-  padding: 12px;
-  text-align: center;
-}
-
-th {
-  background: var(--primary-color);
-  color: white;
+.card-title {
+  font-size: 18px;
   font-weight: 600;
-}
-
-.workday { 
-  background: rgba(40, 167, 69, 0.15); 
-  color: #155724; 
-  font-weight: bold;
-}
-
-.holiday { 
-  background: rgba(220, 53, 69, 0.15); 
-  color: #721c24; 
-  font-weight: bold;
-}
-
-.btn {
-  display: inline-block;
-  padding: 10px 20px;
-  margin: 10px 5px;
-  background: var(--primary-color);
-  border: none;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
+  margin-bottom: 15px;
+  color: var(--primary);
   text-align: center;
-  font-size: 16px;
-  transition: all 0.3s;
-  text-decoration: none;
 }
 
-.btn:hover {
-  background: var(--secondary-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+/* =============== النماذج =============== */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--dark);
+  font-size: 16px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--dark);
+  font-size: 16px;
+  transition: border 0.3s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* =============== الأزرار =============== */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-bottom: 10px;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
 }
 
 .btn-success {
-  background: var(--success-color);
-}
-
-.btn-success:hover {
-  background: #218838;
+  background: var(--success);
+  color: white;
 }
 
 .btn-danger {
-  background: var(--danger-color);
-}
-
-.btn-danger:hover {
-  background: #c82333;
+  background: var(--danger);
+  color: white;
 }
 
 .btn-warning {
-  background: var(--warning-color);
-  color: #212529;
-}
-
-.btn-warning:hover {
-  background: #e0a800;
+  background: var(--warning);
+  color: var(--dark);
 }
 
 .btn-info {
-  background: var(--info-color);
+  background: var(--info);
+  color: white;
 }
 
-.btn-info:hover {
-  background: #138496;
+.btn-sm {
+  padding: 8px 12px;
+  font-size: 14px;
+  width: auto;
+  margin: 5px;
 }
 
-.form-group {
+/* =============== رسالة الترحيب =============== */
+.greeting-card {
+  text-align: center;
+  padding: 25px 20px;
+  margin: 20px 0;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border-radius: 12px;
+  animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.greeting-text {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.user-info {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* =============== رفع الصورة الشخصية =============== */
+.photo-upload-container {
+  text-align: center;
+  padding: 15px;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  margin: 15px 0;
+  background: var(--light);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.photo-upload-container:hover {
+  border-color: var(--primary);
+  background: rgba(0, 122, 255, 0.05);
+}
+
+.photo-preview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--card-bg);
+  box-shadow: 0 4px 12px var(--shadow);
+  margin: 10px auto;
+  display: block;
+}
+
+.photo-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+  color: var(--gray);
+  font-size: 48px;
+}
+
+/* =============== جدول الحضور التفصيلي =============== */
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 14px;
+}
+
+.attendance-table th {
+  background: var(--primary);
+  color: white;
+  padding: 12px 8px;
+  font-weight: 600;
+  position: sticky;
+  top: 60px;
+}
+
+.attendance-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+
+.attendance-table tr:last-child td {
+  border-bottom: none;
+}
+
+.workday {
+  background: rgba(52, 199, 89, 0.15);
+  color: var(--success);
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+.holiday {
+  background: rgba(255, 59, 48, 0.15);
+  color: var(--danger);
+  font-weight: bold;
+  border-radius: 6px;
+  padding: 4px 8px;
+}
+
+.present {
+  background: rgba(52, 199, 89, 0.2);
+}
+
+.absent {
+  background: rgba(255, 59, 48, 0.2);
+}
+
+/* =============== تسجيل الحضور اليومي =============== */
+.attendance-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.time-display {
+  text-align: center;
+  font-size: 14px;
+  color: var(--gray);
+  margin-top: 5px;
+}
+
+/* =============== تقويم الشهر مع تحديد أيام الدوام =============== */
+.month-calendar {
+  margin: 20px 0;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 10px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.calendar-day {
+  text-align: center;
+  padding: 8px;
+  font-weight: 600;
+  color: var(--gray);
+  font-size: 14px;
+}
+
+.calendar-date {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  padding: 5px;
+  position: relative;
+}
+
+.calendar-date:hover {
+  background: var(--border);
+}
+
+.calendar-date.workday {
+  background: rgba(52, 199, 89, 0.1);
+  color: var(--success);
+  border: 2px solid var(--success);
+}
+
+.calendar-date.holiday {
+  background: rgba(255, 59, 48, 0.1);
+  color: var(--danger);
+  border: 2px solid var(--danger);
+}
+
+.calendar-date.today {
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+  border: 2px solid var(--primary);
+}
+
+.calendar-date.present::after {
+  content: '✓';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 12px;
+  color: var(--success);
+  background: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-date.absent::after {
+  content: '✕';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 12px;
+  color: var(--danger);
+  background: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-number {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.date-status {
+  font-size: 10px;
+  margin-top: 2px;
+  text-align: center;
+}
+
+/* =============== إدارة أيام الدوام والعطل =============== */
+.work-schedule-controls {
+  display: flex;
+  gap: 10px;
   margin-bottom: 15px;
 }
 
-label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-input, select {
-  width: 100%;
+.work-schedule-legend {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
   padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  background: var(--card-bg);
-  color: var(--text-color);
-  font-size: 16px;
+  background: var(--light);
+  border-radius: 8px;
 }
 
-input:focus, select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
 }
 
-#greeting {
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.legend-color.work {
+  background: var(--success);
+}
+
+.legend-color.holiday {
+  background: var(--danger);
+}
+
+.legend-color.today {
+  background: var(--primary);
+}
+
+/* =============== الإحصائيات =============== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.stat-item {
   text-align: center;
-  margin: 20px 0;
-  font-size: 1.5em;
-  font-weight: bold;
-  color: var(--primary-color);
-  padding: 10px;
+  padding: 15px;
   background: var(--card-bg);
   border-radius: 8px;
-  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
 }
 
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--gray);
+}
+
+/* =============== القائمة السفلية =============== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  color: var(--gray);
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.nav-item.active {
+  color: var(--primary);
+}
+
+.nav-icon {
+  display: block;
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.nav-label {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* =============== القائمة الجانبية =============== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100%;
+  background: var(--card-bg);
+  box-shadow: -2px 0 20px var(--shadow);
+  z-index: 1100;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  padding-top: env(safe-area-inset-top);
+}
+
+.sidebar.open {
+  right: 0;
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-content {
+  padding: 20px;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  margin-bottom: 10px;
+}
+
+.sidebar-menu a {
+  display: block;
+  padding: 15px;
+  color: var(--dark);
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+  background: var(--primary);
+  color: white;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1050;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+
+.sidebar-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* =============== التنبيهات =============== */
+.alert {
+  position: fixed;
+  top: 80px;
+  right: 15px;
+  left: 15px;
+  padding: 15px;
+  border-radius: 10px;
+  background: var(--card-bg);
+  border-left: 4px solid var(--primary);
+  box-shadow: 0 4px 15px var(--shadow);
+  z-index: 2000;
+  animation: slideDown 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.alert-success {
+  border-left-color: var(--success);
+}
+
+.alert-danger {
+  border-left-color: var(--danger);
+}
+
+.alert-warning {
+  border-left-color: var(--warning);
+}
+
+/* =============== نافذة المستخدمين =============== */
+.user-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+
+.user-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.user-card.current-user {
+  border-right: 4px solid var(--success);
+}
+
+.user-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary);
+}
+
+.user-avatar-placeholder {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray);
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* =============== تحسينات الموبايل =============== */
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  
+  .stat-item {
+    padding: 12px 8px;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+  }
+  
+  .greeting-text {
+    font-size: 20px;
+  }
+  
+  .attendance-table {
+    font-size: 12px;
+  }
+  
+  .attendance-table th,
+  .attendance-table td {
+    padding: 8px 4px;
+  }
+  
+  .calendar-date {
+    font-size: 12px;
+  }
+  
+  .date-number {
+    font-size: 14px;
+  }
+  
+  .photo-preview, .photo-placeholder {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-title {
+    font-size: 16px;
+  }
+  
+  .nav-label {
+    font-size: 10px;
+  }
+  
+  .nav-icon {
+    font-size: 18px;
+  }
+  
+  .calendar-grid {
+    gap: 3px;
+  }
+}
+
+/* =============== الفئات المساعدة =============== */
 .hidden {
   display: none !important;
 }
 
-.visible {
-  display: block !important;
-}
-
-.flex {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-}
-
-/* قائمة جانبية */
-#sidebar {
-  position: fixed;
-  top: 0;
-  left: -250px;
-  width: 250px;
-  height: 100%;
-  background: var(--card-bg);
-  box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-  transition: left 0.3s ease;
-  padding: 60px 20px 20px;
-  z-index: 1000;
-  overflow-y: auto;
-}
-
-#sidebar .btn {
-  width: 100%;
-  margin-bottom: 10px;
-  background: transparent;
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-}
-
-#sidebar .btn:hover {
-  background: var(--primary-color);
-  color: white;
-}
-
-#sidebarToggle {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1100;
-  cursor: pointer;
-  font-size: 24px;
-  background: transparent;
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-  padding: 10px 15px;
-  border-radius: 5px;
-  transition: all 0.3s;
-}
-
-#themeToggle {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1100;
-  cursor: pointer;
-  font-size: 24px;
-  background: transparent;
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-  padding: 10px 15px;
-  border-radius: 50%;
-  transition: all 0.3s;
-}
-
-.sidebar-open #sidebar {
-  left: 0;
-}
-
-/* تذييل الصفحة */
-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  text-align: center;
-  padding: 15px;
-  background: var(--card-bg);
-  color: var(--text-color);
-  border-top: 1px solid var(--border-color);
-  font-size: 14px;
-}
-
-/* متجاوب للموبايل */
-@media (max-width: 768px) {
-  body {
-    padding: 10px;
-  }
-  
-  h1 {
-    font-size: 1.5em;
-    margin-top: 40px;
-  }
-  
-  h2 {
-    font-size: 1.3em;
-  }
-  
-  table {
-    font-size: 14px;
-  }
-  
-  th, td {
-    padding: 8px 5px;
-  }
-  
-  .btn {
-    padding: 8px 15px;
-    font-size: 14px;
-  }
-  
-  #sidebar {
-    width: 200px;
-    left: -200px;
-  }
-  
-  footer {
-    position: relative;
-    margin-top: 20px;
-  }
-  
-  body {
-    padding-bottom: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.3em;
-  }
-  
-  th, td {
-    padding: 6px 3px;
-    font-size: 12px;
-  }
-  
-  .btn {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-  
-  input, select {
-    padding: 8px;
-    font-size: 14px;
-  }
-}
-
-/* تحسينات للجدول */
-.table-container {
-  overflow-x: auto;
-  margin: 20px 0;
-  border-radius: 8px;
-  box-shadow: var(--shadow);
-}
-
-/* تحسينات للنماذج */
-.form-card {
-  max-width: 500px;
-  margin: 20px auto;
-}
-
-/* أنيميشن للأزرار */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.pulse {
-  animation: pulse 1.5s infinite;
-}
-
-/* تحسينات للشيك بوكس */
-input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  accent-color: var(--primary-color);
-}
-
-/* تحسينات للتاريخ */
-.date-display {
-  font-weight: bold;
-  color: var(--primary-color);
-}
-
-/* تحسينات للوقت الإضافي */
-.ot-item {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 10px;
+.text-center {
   text-align: center;
 }
 
-.ot-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
+.text-muted {
+  color: var(--gray);
 }
 
-.ot-date {
-  font-weight: bold;
-  margin-bottom: 5px;
+.mt-1 { margin-top: 5px; }
+.mt-2 { margin-top: 10px; }
+.mt-3 { margin-top: 15px; }
+.mb-1 { margin-bottom: 5px; }
+.mb-2 { margin-bottom: 10px; }
+.mb-3 { margin-bottom: 15px; }
+
+.d-flex { display: flex; }
+.flex-column { flex-direction: column; }
+.justify-center { justify-content: center; }
+.align-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.flex-1 { flex: 1; }
+.flex-wrap { flex-wrap: wrap; }
+
+.gap-1 { gap: 5px; }
+.gap-2 { gap: 10px; }
+.gap-3 { gap: 15px; }
+
+/* =============== الرموز =============== */
+.icon {
+  font-family: 'Segoe UI', sans-serif;
 }
 
-.ot-hours {
-  background: var(--primary-color);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 15px;
-  font-size: 16px;
-  margin: 5px 0;
-  display: inline-block;
-}
-
-.ot-actions {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin-top: 10px;
-}
-
-/* تحسينات لرسائل التنبيه */
-.alert {
-  padding: 15px;
-  border-radius: 5px;
-  margin: 15px 0;
-  text-align: center;
-}
-
-.alert-success {
-  background: rgba(40, 167, 69, 0.2);
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.alert-danger {
-  background: rgba(220, 53, 69, 0.2);
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-/* تحسينات للشريط الجانبي */
-.sidebar-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  padding: 15px;
-  background: var(--card-bg);
-  color: var(--text-color);
-  text-align: center;
-  font-weight: bold;
-  border-bottom: 1px solid var(--border-color);
-}
-
-/* تحسينات للوضع الداكن */
-body.dark .btn {
-  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-}
-
-body.dark input, 
-body.dark select {
-  border-color: #555;
-}
-
-/* نمط زر التعديل والحذف */
-.btn-edit {
-  background: var(--warning-color);
-  color: #212529;
-  padding: 5px 10px;
-  font-size: 14px;
-}
-
-.btn-delete {
-  background: var(--danger-color);
-  padding: 5px 10px;
-  font-size: 14px;
-}
-
-/* نمط نموذج التعديل */
-.edit-form {
-  display: none;
-  margin-top: 10px;
-  padding: 10px;
-  background: var(--card-bg);
-  border-radius: 5px;
-  border: 1px solid var(--border-color);
-}
-
-/* تحسينات للأزرار الشفافة */
-.transparent-btn {
-  background: transparent !important;
-  color: var(--text-color) !important;
-  border: 1px solid var(--border-color) !important;
-}
-
-.transparent-btn:hover {
-  background: var(--primary-color) !important;
-  color: white !important;
-}
-
-/* إضافة نمط لزر إغلاق القائمة */
-#sidebarToggle.close {
-  background: var(--danger-color);
-  color: white;
-}
+.icon-home::before { content: "🏠"; }
+.icon-calendar::before { content: "📅"; }
+.icon-clock::before { content: "⏰"; }
+.icon-user::before { content: "👤"; }
+.icon-menu::before { content: "☰"; }
+.icon-close::before { content: "✕"; }
+.icon-plus::before { content: "➕"; }
+.icon-check::before { content: "✓"; }
+.icon-edit::before { content: "✏️"; }
+.icon-delete::before { content: "🗑️"; }
+.icon-sun::before { content: "☀️"; }
+.icon-moon::before { content: "🌙"; }
+.icon-logout::before { content: "🚪"; }
+.icon-download::before { content: "📥"; }
+.icon-upload::before { content: "📤"; }
+.icon-check-in::before { content: "🟢"; }
+.icon-check-out::before { content: "🔴"; }
+.icon-users::before { content: "👥"; }
+.icon-switch::before { content: "🔄"; }
+.icon-camera::before { content: "📷"; }
+.icon-refresh::before { content: "🔄"; }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>📅 متتبع الحضور الخاص </h1>
-
-  <div id="loginForm" class="card form-card">
-    <h2>تسجيل حساب جديد</h2>
-    <div class="form-group">
-      <label for="username">الاسم:</label>
-      <input type="text" id="username" placeholder="أدخل اسمك">
-    </div>
-    <div class="form-group">
-      <label for="role">الدور:</label>
-      <select id="role">
-        <option value="مهندس">مهندس</option>
-        <option value="فني">فني</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="firstWorkDay">أول يوم دوام:</label>
-      <input type="date" id="firstWorkDay">
-    </div>
-    <button id="registerBtn" class="btn btn-success">تسجيل</button>
-  </div>
-
-  <div id="greeting" class="hidden"></div>
-
-  <div id="mainContent" class="hidden">
-    <!-- جدول الحضور -->
-    <div class="card">
-      <h2>جدول الحضور</h2>
-      <div class="table-container">
-        <table id="attendanceTable">
-          <thead>
-            <tr>
-              <th>التاريخ</th>
-              <th>اليوم</th>
-              <th>الحالة</th>
-              <th>✔️ حضور</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- فورم الوقت الإضافي -->
-    <div id="overtimeForm" class="card form-card hidden">
-      <h2>إضافة وقت إضافي</h2>
-      <div class="form-group">
-        <label for="otDate">التاريخ:</label>
-        <input type="date" id="otDate">
-      </div>
-      <div class="form-group">
-        <label for="otHours">الساعات:</label>
-        <input type="number" id="otHours" min="1" placeholder="عدد الساعات">
-      </div>
-      <button id="saveOTBtn" class="btn">حفظ</button>
-    </div>
-
-    <!-- قائمة الوقت الإضافي -->
-    <div id="overtimeList" class="card hidden">
-      <h2>🕒 قائمة الوقت الإضافي</h2>
-      <div id="overtimeItems"></div>
-    </div>
-  </div>
+<!-- الشريط العلوي -->
+<div class="header">
+  <button id="sidebarToggle" class="header-btn">
+    <span class="icon icon-menu"></span>
+  </button>
+  <div class="header-title" id="pageTitle">نظام الحضور</div>
+  <button id="themeToggle" class="header-btn">
+    <span class="icon icon-sun" id="themeIcon"></span>
+  </button>
 </div>
 
 <!-- القائمة الجانبية -->
-<button id="sidebarToggle" class="hidden">☰</button>
-<div id="sidebar">
-  <div class="sidebar-header">القائمة</div>
-  <button id="overtimeSidebarBtn" class="btn transparent-btn">➕ إضافة وقت إضافي</button>
-  <button id="reportSidebarBtn" class="btn transparent-btn">📊 إنشاء تقرير</button>
-  <button id="resetSidebarBtn" class="btn transparent-btn">🔄 إعادة تسجيل الدخول</button>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h3>القائمة</h3>
+    <button id="closeSidebar" class="header-btn">
+      <span class="icon icon-close"></span>
+    </button>
+  </div>
+  <div class="sidebar-content">
+    <ul class="sidebar-menu">
+      <li><a href="#" data-page="home" class="active">🏠 الرئيسية</a></li>
+      <li><a href="#" data-page="attendance">📅 تسجيل الحضور</a></li>
+      <li><a href="#" data-page="calendar">📆 تقويم الشهر</a></li>
+      <li><a href="#" data-page="overtime">⏰ الوقت الإضافي</a></li>
+      <li><a href="#" data-page="reports">📊 التقارير</a></li>
+      <li><a href="#" data-page="profile">👤 الملف الشخصي</a></li>
+      <li><a href="#" data-page="users">👥 المستخدمين</a></li>
+      <li><a href="#" data-page="settings">⚙️ الإعدادات</a></li>
+    </ul>
+    
+    <div class="mt-3">
+      <button id="logoutBtn" class="btn btn-danger">
+        <span class="icon icon-logout"></span>
+        تسجيل الخروج
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<!-- صفحة اختيار المستخدم -->
+<div id="userSelectionPage" class="page active">
+  <div class="card">
+    <div class="card-title">مرحباً في نظام الحضور</div>
+    
+    <div class="greeting-card">
+      <div class="greeting-text">📅 نظام الحضور الذكي</div>
+      <div class="user-info">اختر حسابك أو سجل حساب جديد</div>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">اختر مستخدم:</label>
+      <select id="userSelect" class="form-input">
+        <option value="">-- اختر مستخدم --</option>
+      </select>
+    </div>
+    
+    <div class="d-flex gap-2">
+      <button id="loginBtn" class="btn btn-primary flex-1">
+        تسجيل الدخول
+      </button>
+      <button id="switchUserBtn" class="btn btn-warning flex-1">
+        <span class="icon icon-switch"></span>
+        تبديل
+      </button>
+    </div>
+    
+    <hr style="margin: 20px 0; border-color: var(--border);">
+    
+    <div class="form-group">
+      <label class="form-label">تسجيل مستخدم جديد:</label>
+      <input type="text" id="newUsername" class="form-input" placeholder="أدخل اسم المستخدم">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">الدور:</label>
+      <select id="newRole" class="form-input">
+        <option value="موظف">موظف</option>
+        <option value="مهندس">مهندس</option>
+        <option value="فني">فني</option>
+        <option value="مدير">مدير</option>
+        <option value="مشرف">مشرف</option>
+        <option value="محاسب">محاسب</option>
+        <option value="سكرتير">سكرتير</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">أول يوم عمل:</label>
+      <input type="date" id="newFirstWorkDay" class="form-input">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">رقم الهاتف (اختياري):</label>
+      <input type="tel" id="newPhone" class="form-input" placeholder="0599xxxxxx">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">صورة الملف الشخصي (اختياري):</label>
+      <div class="photo-upload-container" id="registerPhotoUpload">
+        <div class="photo-placeholder" id="registerPhotoPreview">
+          <span class="icon icon-camera"></span>
+        </div>
+        <p>انقر لاختيار صورة</p>
+        <input type="file" id="registerPhotoInput" accept="image/*" style="display: none;">
+        <small class="text-muted">يُفضل صورة مربعة</small>
+      </div>
+    </div>
+    
+    <button id="registerBtn" class="btn btn-success">
+      تسجيل مستخدم جديد
+    </button>
+  </div>
 </div>
 
-<!-- زر الثيم -->
-<button id="themeToggle" class="transparent-btn">🌞</button>
+<!-- الصفحة الرئيسية -->
+<div id="homePage" class="page">
+  <div class="greeting-card" id="greeting">
+    <div class="d-flex align-center justify-center gap-3 mb-2">
+      <div id="homeUserAvatarContainer">
+        <div id="homeUserAvatarPlaceholder" class="user-avatar-placeholder"></div>
+        <img id="homeUserAvatar" class="user-avatar" src="" alt="صورة المستخدم" style="display: none;">
+      </div>
+      <div>
+        <div class="greeting-text" id="greetingText"></div>
+        <div class="user-info" id="userInfo"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">تسجيل الحضور اليومي</div>
+    
+    <div class="attendance-buttons">
+      <button id="checkInBtn" class="btn btn-success">
+        <span class="icon icon-check-in"></span>
+        تسجيل الحضور
+        <div class="time-display" id="checkInTime">-</div>
+      </button>
+      
+      <button id="checkOutBtn" class="btn btn-danger" disabled>
+        <span class="icon icon-check-out"></span>
+        تسجيل المغادرة
+        <div class="time-display" id="checkOutTime">-</div>
+      </button>
+    </div>
+    
+    <div class="text-center text-muted mt-2" id="attendanceStatus">
+      لم يتم تسجيل الحضور اليوم
+    </div>
+    
+    <div class="d-flex flex-wrap justify-center gap-2 mt-3">
+      <button id="correctAttendanceBtn" class="btn btn-warning btn-sm">
+        <span class="icon icon-edit"></span>
+        تصحيح اليوم
+      </button>
+      <button id="deleteTodayRecord" class="btn btn-danger btn-sm">
+        <span class="icon icon-delete"></span>
+        حذف تسجيل اليوم
+      </button>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">إحصائيات اليوم</div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-value" id="todayHours">0</div>
+        <div class="stat-label">ساعات العمل</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="workDaysCount">0</div>
+        <div class="stat-label">أيام العمل</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="attendanceRate">0%</div>
+        <div class="stat-label">نسبة الحضور</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- تذييل الصفحة -->
-<footer>
-  منشئ البرنامج : المهندس حسين محمد &copy; 2023 - جميع الحقوق محفوظة
-</footer>
+<!-- صفحة تسجيل الحضور التفصيلي -->
+<div id="attendancePage" class="page">
+  <div class="card">
+    <div class="card-title">سجلات الحضور التفصيلية</div>
+    
+    <div class="table-responsive">
+      <table class="attendance-table">
+        <thead>
+          <tr>
+            <th>التاريخ</th>
+            <th>اليوم</th>
+            <th>وقت الحضور</th>
+            <th>وقت المغادرة</th>
+            <th>المدة</th>
+            <th>الحالة</th>
+            <th>إجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="attendanceTableBody">
+          <!-- سيتم ملؤها -->
+        </tbody>
+      </table>
+    </div>
+    
+    <div id="noAttendance" class="hidden">
+      <div class="text-center text-muted mt-3">
+        <div class="icon icon-calendar" style="font-size: 48px; margin-bottom: 10px;"></div>
+        <h3>لا يوجد سجلات حضور</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- صفحة تقويم الشهر مع تحديد أيام الدوام -->
+<div id="calendarPage" class="page">
+  <div class="card">
+    <div class="card-title">تقويم الحضور الشهري</div>
+    
+    <div class="month-calendar">
+      <div class="calendar-header">
+        <button id="prevMonth" class="btn btn-sm">‹</button>
+        <h3 id="currentMonth">شهر 2025</h3>
+        <button id="nextMonth" class="btn btn-sm">›</button>
+      </div>
+      
+      <div class="work-schedule-controls">
+        <button id="setWorkDayBtn" class="btn btn-success btn-sm flex-1">
+          تعيين يوم دوام
+        </button>
+        <button id="setHolidayBtn" class="btn btn-danger btn-sm flex-1">
+          تعيين يوم عطلة
+        </button>
+      </div>
+      
+      <div class="calendar-grid" id="calendarGrid">
+        <!-- سيتم ملؤها -->
+      </div>
+    </div>
+    
+    <div class="work-schedule-legend">
+      <div class="legend-item">
+        <div class="legend-color work"></div>
+        <span>أيام العمل</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color holiday"></div>
+        <span>أيام العطلة</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color today"></div>
+        <span>اليوم الحالي</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">ملخص الشهر</div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-value" id="monthWorkDays">0</div>
+        <div class="stat-label">أيام عمل</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="monthHolidays">0</div>
+        <div class="stat-label">أيام عطلة</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="monthAttendance">0</div>
+        <div class="stat-label">حضور</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- صفحة الوقت الإضافي -->
+<div id="overtimePage" class="page">
+  <div class="card">
+    <div class="card-title">إضافة وقت إضافي</div>
+    
+    <div class="form-group">
+      <label class="form-label">التاريخ:</label>
+      <input type="date" id="otDate" class="form-input">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">عدد الساعات:</label>
+      <input type="number" id="otHours" class="form-input" min="0.5" max="12" step="0.5" placeholder="مثال: 2.5">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">نوع الوقت الإضافي:</label>
+      <select id="otType" class="form-input">
+        <option value="عادي">عادي</option>
+        <option value="عطلة رسمية">عطلة رسمية</option>
+        <option value="طارئ">طارئ</option>
+        <option value="إضافي مسائي">إضافي مسائي</option>
+      </select>
+    </div>
+    
+    <div class="d-flex gap-2">
+      <button id="saveOTBtn" class="btn btn-success flex-1">
+        <span class="icon icon-plus"></span>
+        إضافة وقت إضافي
+      </button>
+      <button id="clearOTBtn" class="btn btn-warning">
+        <span class="icon icon-close"></span>
+      </button>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">سجل الوقت الإضافي</div>
+    <div id="overtimeList">
+      <!-- سيتم ملؤها -->
+    </div>
+    
+    <div id="noOvertime" class="hidden">
+      <div class="text-center text-muted mt-3">
+        <div class="icon icon-clock" style="font-size: 48px; margin-bottom: 10px;"></div>
+        <h3>لا يوجد وقت إضافي</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- صفحة التقارير -->
+<div id="reportsPage" class="page">
+  <div class="card">
+    <div class="card-title">تقارير الحضور</div>
+    
+    <div class="form-group">
+      <label class="form-label">الفترة:</label>
+      <select id="reportPeriod" class="form-input">
+        <option value="week">أسبوع</option>
+        <option value="month">شهر</option>
+        <option value="quarter">ربع سنة</option>
+        <option value="year">سنة</option>
+        <option value="custom">مخصص</option>
+      </select>
+    </div>
+    
+    <div id="customDateRange" class="hidden">
+      <div class="form-group">
+        <label class="form-label">من تاريخ:</label>
+        <input type="date" id="reportFromDate" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">إلى تاريخ:</label>
+        <input type="date" id="reportToDate" class="form-input">
+      </div>
+    </div>
+    
+    <div class="d-flex gap-2">
+      <button id="generateReport" class="btn btn-primary flex-1">
+        إنشاء تقرير
+      </button>
+      <button id="exportReport" class="btn btn-success flex-1">
+        <span class="icon icon-download"></span>
+        تصدير
+      </button>
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">إحصائيات التقرير</div>
+    <div id="reportStats">
+      <!-- سيتم ملؤها -->
+    </div>
+  </div>
+</div>
+
+<!-- صفحة الملف الشخصي -->
+<div id="profilePage" class="page">
+  <div class="card">
+    <div class="card-title">الملف الشخصي</div>
+    
+    <div class="text-center mb-3">
+      <div id="profileAvatarContainer">
+        <div id="profileAvatarPlaceholder" class="user-avatar-placeholder"></div>
+        <img id="profileAvatar" class="user-avatar" src="" alt="صورة الملف الشخصي" style="display: none;">
+      </div>
+      <button id="changePhotoBtn" class="btn btn-sm btn-primary mt-2">
+        <span class="icon icon-camera"></span>
+        تغيير الصورة
+      </button>
+      <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">اسم المستخدم:</label>
+      <div class="form-input" style="background: var(--light);" id="profileUsername"></div>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">الدور:</label>
+      <div class="form-input" style="background: var(--light);" id="profileRole"></div>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">تاريخ أول يوم دوام:</label>
+      <div class="form-input" style="background: var(--light);" id="profileStartDate"></div>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">رقم الهاتف:</label>
+      <div class="form-input" style="background: var(--light);" id="profilePhone"></div>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">تاريخ التسجيل:</label>
+      <div class="form-input" style="background: var(--light);" id="profileRegisterDate"></div>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">عدد أيام الحضور:</label>
+      <div class="form-input" style="background: var(--light);" id="profileAttendanceDays">0</div>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">مجموع ساعات العمل:</label>
+      <div class="form-input" style="background: var(--light);" id="profileTotalHours">0</div>
+    </div>
+    
+    <div class="d-flex gap-2">
+      <button id="exportDataBtn" class="btn btn-primary flex-1">
+        <span class="icon icon-download"></span>
+        تصدير بياناتي
+      </button>
+      <button id="importDataBtn" class="btn btn-warning flex-1">
+        <span class="icon icon-upload"></span>
+        استيراد بيانات
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- صفحة المستخدمين -->
+<div id="usersPage" class="page">
+  <div class="card">
+    <div class="card-title">👥 إدارة المستخدمين</div>
+    
+    <div class="form-group">
+      <input type="text" id="searchUsers" class="form-input" placeholder="بحث عن مستخدم...">
+    </div>
+    
+    <div id="usersListContainer">
+      <!-- سيتم ملؤها -->
+    </div>
+    
+    <div id="noUsers" class="hidden">
+      <div class="text-center text-muted mt-3">
+        <div class="icon icon-users" style="font-size: 48px; margin-bottom: 10px;"></div>
+        <h3>لا يوجد مستخدمين مسجلين</h3>
+        <p>سجل أول مستخدم لبدء النظام</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- صفحة الإعدادات -->
+<div id="settingsPage" class="page">
+  <div class="card">
+    <div class="card-title">الإعدادات</div>
+    
+    <div class="form-group">
+      <label class="d-flex justify-between align-center">
+        <span>الوضع الداكن</span>
+        <input type="checkbox" id="darkModeToggle" style="transform: scale(1.2);">
+      </label>
+    </div>
+    
+    <div class="form-group">
+      <label class="d-flex justify-between align-center">
+        <span>التنبيهات</span>
+        <input type="checkbox" id="notificationsToggle" checked style="transform: scale(1.2);">
+      </label>
+    </div>
+    
+    <div class="form-group">
+      <label class="d-flex justify-between align-center">
+        <span>تذكير الحضور اليومي</span>
+        <input type="checkbox" id="attendanceReminder" checked style="transform: scale(1.2);">
+      </label>
+    </div>
+    
+    <div class="form-group">
+      <label class="d-flex justify-between align-center">
+        <span>تأكيد قبل تسجيل المغادرة</span>
+        <input type="checkbox" id="confirmCheckout" checked style="transform: scale(1.2);">
+      </label>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">وقت التذكير:</label>
+      <select id="reminderTime" class="form-input">
+        <option value="08:00">08:00 صباحاً</option>
+        <option value="09:00">09:00 صباحاً</option>
+        <option value="17:00">05:00 مساءً</option>
+        <option value="18:00">06:00 مساءً</option>
+      </select>
+    </div>
+    
+    <button id="resetBtn" class="btn btn-danger mt-3">
+      <span class="icon icon-delete"></span>
+      مسح جميع البيانات
+    </button>
+    
+    <button id="backupBtn" class="btn btn-primary mt-2">
+      <span class="icon icon-download"></span>
+      نسخة احتياطية
+    </button>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">حول التطبيق</div>
+    <p class="text-center text-muted">
+      نسخة 7.0.0<br>
+      نظام متعدد المستخدمين مع تقويم الدوام<br>
+      المطور: المهندس حسين محمد<br>
+      © 2025 جميع الحقوق محفوظة
+    </p>
+  </div>
+</div>
+
+<!-- القائمة السفلية -->
+<div class="bottom-nav">
+  <a href="#" data-page="home" class="nav-item active">
+    <span class="nav-icon icon icon-home"></span>
+    <span class="nav-label">الرئيسية</span>
+  </a>
+  <a href="#" data-page="attendance" class="nav-item">
+    <span class="nav-icon icon icon-calendar"></span>
+    <span class="nav-label">الحضور</span>
+  </a>
+  <a href="#" data-page="calendar" class="nav-item">
+    <span class="nav-icon icon icon-clock"></span>
+    <span class="nav-label">التقويم</span>
+  </a>
+  <a href="#" data-page="reports" class="nav-item">
+    <span class="nav-icon icon icon-user"></span>
+    <span class="nav-label">التقارير</span>
+  </a>
+</div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const attendanceKey = "attendanceData";
-  const overtimeKey = "overtimeData";
-  const userKey = "userData";
-
-  let attendanceData = JSON.parse(localStorage.getItem(attendanceKey)) || {};
-  let overtimeData = JSON.parse(localStorage.getItem(overtimeKey)) || [];
-  let userData = JSON.parse(localStorage.getItem(userKey));
-
-  const loginForm = document.getElementById("loginForm");
-  const greetingDiv = document.getElementById("greeting");
-  const mainContent = document.getElementById("mainContent");
-  const attendanceTable = document.getElementById("attendanceTable");
-  const overtimeList = document.getElementById("overtimeList");
-  const overtimeItems = document.getElementById("overtimeItems");
-  const overtimeForm = document.getElementById("overtimeForm");
-  const saveOTBtn = document.getElementById("saveOTBtn");
-
-  const sidebar = document.getElementById("sidebar");
-  const sidebarToggle = document.getElementById("sidebarToggle");
-  const overtimeSidebarBtn = document.getElementById("overtimeSidebarBtn");
-  const reportSidebarBtn = document.getElementById("reportSidebarBtn");
-  const resetSidebarBtn = document.getElementById("resetSidebarBtn");
-  const themeToggle = document.getElementById("themeToggle");
-
-  // تحميل الوضع الداكن إذا كان مفعلًا سابقًا
-  if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark");
-    themeToggle.textContent = "🌙";
+// ======================= النظام الأساسي =======================
+class WorkScheduleAttendanceSystem {
+  constructor() {
+    this.keys = {
+      users: 'attendance_users_v7',
+      attendance: 'attendance_records_v7',
+      overtime: 'overtime_records_v7',
+      settings: 'app_settings_v7',
+      currentUser: 'current_user_v7',
+      workSchedule: 'work_schedule_v7',
+      userPhotos: 'user_photos_v7'
+    };
+    
+    this.users = [];
+    this.currentUser = null;
+    this.attendanceRecords = [];
+    this.overtimeRecords = [];
+    this.workSchedule = {};
+    this.userPhotos = {};
+    this.settings = {
+      darkMode: false,
+      notifications: true,
+      attendanceReminder: true,
+      confirmCheckout: true,
+      reminderTime: '08:00'
+    };
+    this.currentMonth = new Date().getMonth();
+    this.currentYear = new Date().getFullYear();
+    this.selectedDate = null;
+    
+    this.init();
   }
-
-  function showGreeting() {
+  
+  init() {
+    this.loadAllData();
+    this.setupEventListeners();
+    this.applySettings();
+    this.checkCurrentUser();
+    this.updateUsersDropdown();
+    this.setDefaultDates();
+    this.updateCurrentMonthYear();
+  }
+  
+  updateCurrentMonthYear() {
     const now = new Date();
-    const hour = now.getHours();
-    let greeting = hour < 12 ? "صباح الخير" : "مساء الخير";
-    greetingDiv.textContent = `${greeting} ${userData.role} ${userData.name}`;
-    greetingDiv.classList.remove("hidden");
+    this.currentMonth = now.getMonth();
+    this.currentYear = now.getFullYear();
   }
-
-  function getDayName(date) {
-    const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-    return days[date.getDay()];
-  }
-
-  function generateSchedule() {
-    const tbody = document.querySelector("#attendanceTable tbody");
-    tbody.innerHTML = "";
+  
+  loadAllData() {
+    const usersData = localStorage.getItem(this.keys.users);
+    this.users = usersData ? JSON.parse(usersData) : [];
     
-    if (!userData || !userData.firstWorkDay) return;
+    const attendanceData = localStorage.getItem(this.keys.attendance);
+    this.attendanceRecords = attendanceData ? JSON.parse(attendanceData) : [];
     
-    let startDate = new Date(userData.firstWorkDay);
-    let currentDate = new Date(startDate);
+    const overtimeData = localStorage.getItem(this.keys.overtime);
+    this.overtimeRecords = overtimeData ? JSON.parse(overtimeData) : [];
     
-    // حساب نهاية الشهر الحالي
-    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    const workScheduleData = localStorage.getItem(this.keys.workSchedule);
+    this.workSchedule = workScheduleData ? JSON.parse(workScheduleData) : {};
     
-    // إنشاء جدول من تاريخ البدء حتى نهاية الشهر
-    let dayCounter = 0;
-    let isWorkDay = true; // أول يوم دوام هو يوم عمل
+    const photosData = localStorage.getItem(this.keys.userPhotos);
+    this.userPhotos = photosData ? JSON.parse(photosData) : {};
     
-    while (currentDate <= endOfMonth) {
-      const dateStr = currentDate.toISOString().split("T")[0];
-      const status = isWorkDay ? "Workday" : "Holiday";
-      
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td class="date-display">${dateStr}</td>
-        <td>${getDayName(currentDate)}</td>
-        <td class="${isWorkDay ? 'workday' : 'holiday'}">${status}</td>
-        <td>${isWorkDay ? 
-          `<input type="checkbox" data-date="${dateStr}" ${attendanceData[dateStr] ? 'checked' : ''}>` : 
-          "❌"}</td>
-      `;
-      
-      tbody.appendChild(row);
-
-      const cb = row.querySelector("input[type='checkbox']");
-      if (cb) {
-        cb.addEventListener("change", () => {
-          attendanceData[cb.dataset.date] = cb.checked;
-          localStorage.setItem(attendanceKey, JSON.stringify(attendanceData));
-        });
+    const settings = localStorage.getItem(this.keys.settings);
+    if (settings) {
+      this.settings = JSON.parse(settings);
+    }
+    
+    const currentUser = localStorage.getItem(this.keys.currentUser);
+    if (currentUser) {
+      const user = this.users.find(u => u.id === currentUser);
+      if (user) {
+        this.currentUser = user;
       }
-      
-      // تحديث حالة اليوم التالي (يوم دوام يتبعه يومان عطلة)
-      if (isWorkDay) {
-        isWorkDay = false; // اليوم التالي عطلة
-      } else {
-        // إذا كان اليوم عطلة، نتحقق إذا كانت العطلة الثانية
-        if (dayCounter % 3 === 2) {
-          isWorkDay = true; // نعود إلى يوم دوام
-        }
+    }
+  }
+  
+  saveAllData() {
+    localStorage.setItem(this.keys.users, JSON.stringify(this.users));
+    localStorage.setItem(this.keys.attendance, JSON.stringify(this.attendanceRecords));
+    localStorage.setItem(this.keys.overtime, JSON.stringify(this.overtimeRecords));
+    localStorage.setItem(this.keys.workSchedule, JSON.stringify(this.workSchedule));
+    localStorage.setItem(this.keys.userPhotos, JSON.stringify(this.userPhotos));
+    localStorage.setItem(this.keys.settings, JSON.stringify(this.settings));
+    
+    if (this.currentUser) {
+      localStorage.setItem(this.keys.currentUser, this.currentUser.id);
+    }
+  }
+  
+  // ======================= التحسينات الجديدة =======================
+  getGreetingWithTitle() {
+    const hour = new Date().getHours();
+    let greeting = '';
+    
+    if (hour < 12) {
+      greeting = 'صباح الخير';
+    } else if (hour < 18) {
+      greeting = 'مساء الخير';
+    } else {
+      greeting = 'مساء الخير';
+    }
+    
+    if (this.currentUser) {
+      const role = this.currentUser.role;
+      switch(role) {
+        case 'مهندس':
+          return `${greeting} مهندس ${this.currentUser.username}`;
+        case 'مدير':
+          return `${greeting} مدير ${this.currentUser.username}`;
+        case 'مشرف':
+          return `${greeting} مشرف ${this.currentUser.username}`;
+        case 'محاسب':
+          return `${greeting} محاسب ${this.currentUser.username}`;
+        case 'سكرتير':
+          return `${greeting} سكرتير ${this.currentUser.username}`;
+        default:
+          return `${greeting} ${this.currentUser.username}`;
       }
+    }
+    return greeting;
+  }
+  
+  // ======================= إدارة الصور الشخصية =======================
+  async addUserPhoto(file) {
+    if (!this.currentUser) return null;
+    
+    try {
+      const compressedImage = await this.compressImage(file);
       
-      dayCounter++;
-      currentDate.setDate(currentDate.getDate() + 1);
+      const photoId = `photo_${Date.now()}`;
+      const photo = {
+        id: photoId,
+        userId: this.currentUser.id,
+        data: compressedImage,
+        uploadDate: new Date().toISOString()
+      };
+      
+      this.userPhotos[this.currentUser.id] = photo;
+      this.currentUser.profilePhotoId = photoId;
+      this.updateUser(this.currentUser);
+      
+      this.saveAllData();
+      return photo;
+      
+    } catch (error) {
+      console.error('خطأ في معالجة الصورة:', error);
+      this.showAlert('خطأ في معالجة الصورة', 'danger');
+      return null;
+    }
+  }
+  
+  compressImage(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          const maxSize = 150;
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > height) {
+            if (width > maxSize) {
+              height *= maxSize / width;
+              width = maxSize;
+            }
+          } else {
+            if (height > maxSize) {
+              width *= maxSize / height;
+              height = maxSize;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+          resolve(compressedBase64);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  
+  getUserPhoto(userId = null) {
+    const targetUserId = userId || (this.currentUser ? this.currentUser.id : null);
+    if (!targetUserId || !this.userPhotos[targetUserId]) return null;
+    
+    return this.userPhotos[targetUserId];
+  }
+  
+  // ======================= إدارة جدول الدوام =======================
+  setWorkDay(date, isWorkDay = true) {
+    if (!this.currentUser) return;
+    
+    const dateStr = this.formatDate(date);
+    const userId = this.currentUser.id;
+    
+    if (!this.workSchedule[userId]) {
+      this.workSchedule[userId] = {};
     }
     
-    renderOvertime();
-  }
-
-  // إصلاح: جعل الدالة محلية بدلاً من global
-  function scrollToOvertime() {
-    overtimeForm.classList.remove("hidden");
-    overtimeForm.scrollIntoView({ behavior: "smooth" });
-  }
-
-  function saveOvertime() {
-    const date = document.getElementById("otDate").value;
-    const hours = document.getElementById("otHours").value;
+    this.workSchedule[userId][dateStr] = isWorkDay ? 'work' : 'holiday';
     
-    if (!date || !hours) {
-      showAlert("يرجى إكمال جميع البيانات", "danger");
-      return;
+    this.saveAllData();
+    this.generateMonthCalendar();
+  }
+  
+  getDayType(date) {
+    if (!this.currentUser) return 'work';
+    
+    const dateStr = this.formatDate(date);
+    const userId = this.currentUser.id;
+    
+    if (!this.workSchedule[userId] || !this.workSchedule[userId][dateStr]) {
+      return this.isWorkDayByDefault(date) ? 'work' : 'holiday';
     }
     
-    overtimeData.push({ date, hours });
-    localStorage.setItem(overtimeKey, JSON.stringify(overtimeData));
-    
-    document.getElementById("otDate").value = "";
-    document.getElementById("otHours").value = "";
-    
-    renderOvertime();
-    overtimeForm.classList.add("hidden");
-    
-    showAlert("تم حفظ الوقت الإضافي بنجاح", "success");
+    return this.workSchedule[userId][dateStr];
   }
-
-  // إصلاح: جعل الدالة محلية بدلاً من global
-  function editOvertime(index) {
-    const item = overtimeData[index];
-    const editForm = document.getElementById(`editForm-${index}`);
+  
+  isWorkDayByDefault(date) {
+    const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+    return dayOfYear % 3 === 0;
+  }
+  
+  // ======================= تقويم الشهر =======================
+  generateMonthCalendar() {
+    if (!this.currentUser) return;
     
-    if (editForm.style.display === "block") {
-      editForm.style.display = "none";
-      return;
-    }
+    const container = document.getElementById('calendarGrid');
+    const monthNames = [
+      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+    ];
     
-    // إخفاء جميع نماذج التعديل الأخرى
-    document.querySelectorAll('.edit-form').forEach(form => {
-      form.style.display = "none";
+    document.getElementById('currentMonth').textContent = 
+      `${monthNames[this.currentMonth]} ${this.currentYear}`;
+    
+    const firstDay = new Date(this.currentYear, this.currentMonth, 1);
+    const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+    const today = new Date();
+    
+    const weekDays = ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
+    
+    let html = '';
+    
+    weekDays.forEach(day => {
+      html += `<div class="calendar-day">${day}</div>`;
     });
     
-    editForm.innerHTML = `
-      <div class="form-group">
-        <label for="editDate-${index}">التاريخ:</label>
-        <input type="date" id="editDate-${index}" value="${item.date}">
-      </div>
-      <div class="form-group">
-        <label for="editHours-${index}">الساعات:</label>
-        <input type="number" id="editHours-${index}" value="${item.hours}" min="1">
-      </div>
-      <button class="btn btn-success" onclick="saveEdit(${index})">حفظ التعديل</button>
-      <button class="btn btn-danger" onclick="cancelEdit(${index})">إلغاء</button>
-    `;
-    
-    editForm.style.display = "block";
-  }
-
-  // إصلاح: جعل الدوال global بشكل صحيح
-  window.saveEdit = function(index) {
-    const date = document.getElementById(`editDate-${index}`).value;
-    const hours = document.getElementById(`editHours-${index}`).value;
-    
-    if (!date || !hours) {
-      showAlert("يرجى إكمال جميع البيانات", "danger");
-      return;
+    for (let i = 0; i < firstDay.getDay(); i++) {
+      html += `<div class="calendar-date"></div>`;
     }
     
-    overtimeData[index] = { date, hours };
-    localStorage.setItem(overtimeKey, JSON.stringify(overtimeData));
-    
-    renderOvertime();
-    showAlert("تم تعديل الوقت الإضافي بنجاح", "success");
-  }
-
-  window.cancelEdit = function(index) {
-    document.getElementById(`editForm-${index}`).style.display = "none";
-  }
-
-  // إصلاح: جعل الدالة محلية بدلاً من global
-  function deleteOvertime(index) {
-    if (confirm("هل أنت متأكد من أنك تريد حذف هذا الوقت الإضافي؟")) {
-      overtimeData.splice(index, 1);
-      localStorage.setItem(overtimeKey, JSON.stringify(overtimeData));
-      renderOvertime();
-      showAlert("تم حذف الوقت الإضافي بنجاح", "success");
-    }
-  }
-
-  function renderOvertime() {
-    overtimeItems.innerHTML = "";
-    
-    if (overtimeData.length === 0) {
-      overtimeList.classList.add("hidden");
-      return;
-    }
-    
-    overtimeList.classList.remove("hidden");
-    
-    overtimeData.forEach((item, index) => {
-      const otItem = document.createElement("div");
-      otItem.className = "ot-item";
-      otItem.innerHTML = `
-        <div class="ot-date">${item.date}</div>
-        <div class="ot-hours">${item.hours} ساعة</div>
-        <div class="ot-actions">
-          <button class="btn btn-edit" onclick="editOvertime(${index})">✏️ تعديل</button>
-          <button class="btn btn-delete" onclick="deleteOvertime(${index})">🗑️ حذف</button>
+    for (let day = 1; day <= lastDay.getDate(); day++) {
+      const date = new Date(this.currentYear, this.currentMonth, day);
+      const dateStr = this.formatDate(date);
+      const isToday = this.formatDate(today) === dateStr;
+      const dayType = this.getDayType(date);
+      const isWorkDay = dayType === 'work';
+      
+      const attendanceRecord = this.attendanceRecords.find(record => 
+        record.date === dateStr && record.userId === this.currentUser.id
+      );
+      
+      let classes = 'calendar-date';
+      if (isWorkDay) classes += ' workday';
+      else classes += ' holiday';
+      
+      if (isToday) classes += ' today';
+      
+      if (attendanceRecord) {
+        classes += attendanceRecord.status === 'present' ? ' present' : ' absent';
+      }
+      
+      html += `
+        <div class="${classes}" data-date="${dateStr}" onclick="app.selectDate('${dateStr}')">
+          <div class="date-number">${day}</div>
+          <div class="date-status">${isWorkDay ? 'دوام' : 'عطلة'}</div>
         </div>
-        <div id="editForm-${index}" class="edit-form"></div>
       `;
-      overtimeItems.appendChild(otItem);
-    });
-    
-    // إصلاح: ربط الأحداث للأزرار الجديدة
-    document.querySelectorAll('.btn-edit').forEach((btn, index) => {
-      btn.onclick = () => editOvertime(index);
-    });
-    
-    document.querySelectorAll('.btn-delete').forEach((btn, index) => {
-      btn.onclick = () => deleteOvertime(index);
-    });
-  }
-
-  function generateReport() {
-    if (!userData) return;
-    
-    // حساب إجمالي أيام العمل والحضور والوقت الإضافي
-    let totalWorkDays = 0;
-    let totalAttendance = 0;
-    let totalOvertime = 0;
-    
-    // حساب إجمالي أيام العمل
-    let currentDate = new Date(userData.firstWorkDay);
-    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    let dayCounter = 0;
-    let isWorkDay = true;
-    
-    while (currentDate <= endOfMonth) {
-      const dateStr = currentDate.toISOString().split("T")[0];
-      
-      if (isWorkDay) {
-        totalWorkDays++;
-        if (attendanceData[dateStr]) {
-          totalAttendance++;
-        }
-      }
-      
-      // تحديث حالة اليوم التالي (يوم دوام يتبعه يومان عطلة)
-      if (isWorkDay) {
-        isWorkDay = false;
-      } else {
-        if (dayCounter % 3 === 2) {
-          isWorkDay = true;
-        }
-      }
-      
-      dayCounter++;
-      currentDate.setDate(currentDate.getDate() + 1);
     }
     
-    // حساب إجمالي الوقت الإضافي
-    overtimeData.forEach(item => {
-      totalOvertime += parseInt(item.hours);
+    container.innerHTML = html;
+    
+    this.updateMonthStats();
+  }
+  
+  selectDate(dateStr) {
+    this.selectedDate = dateStr;
+    
+    document.querySelectorAll('.calendar-date.selected').forEach(el => {
+      el.classList.remove('selected');
     });
     
-    // إنشاء محتوى التقرير
-    const reportContent = `
-      تقرير الحضور والوقت الإضافي
-      ============================
-      الاسم: ${userData.name}
-      الدور: ${userData.role}
-      تاريخ أول يوم دوام: ${userData.firstWorkDay}
+    const dateElement = document.querySelector(`.calendar-date[data-date="${dateStr}"]`);
+    if (dateElement) {
+      dateElement.classList.add('selected');
+    }
+  }
+  
+  updateMonthStats() {
+    if (!this.currentUser) return;
+    
+    const firstDay = new Date(this.currentYear, this.currentMonth, 1);
+    const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+    
+    let workDays = 0;
+    let holidays = 0;
+    let attendance = 0;
+    
+    for (let date = new Date(firstDay); date <= lastDay; date.setDate(date.getDate() + 1)) {
+      const dateStr = this.formatDate(date);
+      const dayType = this.getDayType(date);
       
-      إحصائيات الشهر:
-      - إجمالي أيام العمل: ${totalWorkDays}
-      - أيام الحضور: ${totalAttendance}
-      - أيام الغياب: ${totalWorkDays - totalAttendance}
-      - إجمالي الوقت الإضافي: ${totalOvertime} ساعة
+      if (dayType === 'work') {
+        workDays++;
+        
+        const record = this.attendanceRecords.find(record => 
+          record.date === dateStr && record.userId === this.currentUser.id && record.status === 'present'
+        );
+        
+        if (record) attendance++;
+      } else {
+        holidays++;
+      }
+    }
+    
+    document.getElementById('monthWorkDays').textContent = workDays;
+    document.getElementById('monthHolidays').textContent = holidays;
+    document.getElementById('monthAttendance').textContent = attendance;
+  }
+  
+  // ======================= إدارة المستخدمين =======================
+  registerNewUser() {
+    const username = document.getElementById('newUsername').value.trim();
+    const role = document.getElementById('newRole').value;
+    const firstWorkDay = document.getElementById('newFirstWorkDay').value;
+    const phone = document.getElementById('newPhone').value.trim();
+    
+    if (!username || !role || !firstWorkDay) {
+      this.showAlert('يرجى تعبئة جميع الحقول الإلزامية', 'danger');
+      return;
+    }
+    
+    if (this.users.some(user => user.username === username)) {
+      this.showAlert('اسم المستخدم موجود مسبقاً', 'warning');
+      return;
+    }
+    
+    const userId = `user_${Date.now()}`;
+    
+    const newUser = {
+      id: userId,
+      username,
+      role,
+      firstWorkDay,
+      phone: phone || 'غير محدد',
+      registerDate: new Date().toISOString(),
+      isActive: true,
+      profilePhotoId: null
+    };
+    
+    this.users.push(newUser);
+    this.currentUser = newUser;
+    
+    const photoInput = document.getElementById('registerPhotoInput');
+    if (photoInput.files && photoInput.files[0]) {
+      this.addUserPhoto(photoInput.files[0])
+        .then(() => {
+          this.finalizeRegistration();
+        })
+        .catch(() => {
+          this.finalizeRegistration();
+        });
+    } else {
+      this.finalizeRegistration();
+    }
+  }
+  
+  finalizeRegistration() {
+    this.saveAllData();
+    
+    this.updateUsersDropdown();
+    
+    document.getElementById('newUsername').value = '';
+    document.getElementById('newPhone').value = '';
+    const preview = document.getElementById('registerPhotoPreview');
+    preview.innerHTML = '<span class="icon icon-camera"></span>';
+    
+    this.showAlert(`تم تسجيل المستخدم ${this.currentUser.username} بنجاح`, 'success');
+    this.showPage('home');
+    this.updateHomePage();
+  }
+  
+  updateUser(user) {
+    const index = this.users.findIndex(u => u.id === user.id);
+    if (index !== -1) {
+      this.users[index] = user;
+      this.saveAllData();
+    }
+  }
+  
+  // ======================= الواجهة =======================
+  updateHomePage() {
+    if (!this.currentUser) return;
+    
+    const userPhoto = this.getUserPhoto();
+    const avatarElement = document.getElementById('homeUserAvatar');
+    const placeholder = document.getElementById('homeUserAvatarPlaceholder');
+    
+    if (userPhoto) {
+      avatarElement.src = userPhoto.data;
+      avatarElement.style.display = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      avatarElement.style.display = 'none';
+      placeholder.style.display = 'flex';
+      placeholder.textContent = this.currentUser.username.charAt(0).toUpperCase();
+    }
+    
+    document.getElementById('greetingText').textContent = this.getGreetingWithTitle();
+    document.getElementById('userInfo').textContent = `${this.currentUser.role} - تاريخ البدء: ${this.currentUser.firstWorkDay}`;
+    
+    this.updateTodayAttendance();
+    this.updateTodayStats();
+  }
+  
+  updateProfilePage() {
+    if (!this.currentUser) return;
+    
+    const userPhoto = this.getUserPhoto();
+    const avatarElement = document.getElementById('profileAvatar');
+    const placeholder = document.getElementById('profileAvatarPlaceholder');
+    
+    if (userPhoto) {
+      avatarElement.src = userPhoto.data;
+      avatarElement.style.display = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      avatarElement.style.display = 'none';
+      placeholder.style.display = 'flex';
+      placeholder.textContent = this.currentUser.username.charAt(0).toUpperCase();
+    }
+    
+    document.getElementById('profileUsername').textContent = this.currentUser.username;
+    document.getElementById('profileRole').textContent = this.currentUser.role;
+    document.getElementById('profileStartDate').textContent = this.currentUser.firstWorkDay;
+    document.getElementById('profilePhone').textContent = this.currentUser.phone;
+    document.getElementById('profileRegisterDate').textContent = 
+      new Date(this.currentUser.registerDate).toLocaleDateString('ar-SA');
+    
+    const attendanceDays = this.attendanceRecords.filter(record => 
+      record.userId === this.currentUser.id && record.status === 'present'
+    ).length;
+    
+    const totalHours = this.attendanceRecords
+      .filter(record => record.userId === this.currentUser.id)
+      .reduce((sum, record) => sum + parseFloat(record.hours || 0), 0);
+    
+    document.getElementById('profileAttendanceDays').textContent = attendanceDays;
+    document.getElementById('profileTotalHours').textContent = totalHours.toFixed(2);
+  }
+  
+  // ======================= إدارة الحضور المحسنة =======================
+  checkIn() {
+    if (!this.currentUser) {
+      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
+      return;
+    }
+    
+    const today = this.getTodayDate();
+    const now = new Date();
+    const time = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+    
+    let record = this.attendanceRecords.find(record => 
+      record.date === today && record.userId === this.currentUser.id
+    );
+    
+    if (record) {
+      if (record.checkIn) {
+        this.showAlert('لقد سجلت الحضور مسبقاً اليوم', 'warning');
+        return;
+      }
       
-      تفاصيل الوقت الإضافي:
-      ${overtimeData.map(item => `- ${item.date}: ${item.hours} ساعة`).join('\n')}
+      if (record.checkOut) {
+        this.showAlert('لقد سجلت المغادرة مسبقاً اليوم', 'warning');
+        return;
+      }
+    } else {
+      record = {
+        id: Date.now(),
+        userId: this.currentUser.id,
+        date: today,
+        checkIn: time,
+        checkOut: null,
+        hours: 0,
+        status: 'present'
+      };
+      this.attendanceRecords.push(record);
+    }
+    
+    record.checkIn = time;
+    
+    this.saveAllData();
+    
+    document.getElementById('checkInTime').textContent = time;
+    document.getElementById('checkInBtn').disabled = true;
+    document.getElementById('checkOutBtn').disabled = false;
+    document.getElementById('attendanceStatus').textContent = `تم تسجيل الحضور الساعة ${time}`;
+    document.getElementById('attendanceStatus').style.color = 'var(--success)';
+    
+    this.showAlert('تم تسجيل الحضور بنجاح', 'success');
+    this.updateTodayStats();
+  }
+  
+  checkOut() {
+    if (!this.currentUser) {
+      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
+      return;
+    }
+    
+    const today = this.getTodayDate();
+    const now = new Date();
+    const time = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+    
+    const record = this.attendanceRecords.find(record => 
+      record.date === today && 
+      record.userId === this.currentUser.id && 
+      record.checkIn && 
+      !record.checkOut
+    );
+    
+    if (!record) {
+      const completedRecord = this.attendanceRecords.find(record => 
+        record.date === today && 
+        record.userId === this.currentUser.id && 
+        record.checkOut
+      );
+      
+      if (completedRecord) {
+        this.showAlert('لقد سجلت المغادرة مسبقاً اليوم', 'warning');
+        return;
+      }
+      
+      this.showAlert('لم يتم تسجيل الحضور اليوم', 'danger');
+      return;
+    }
+    
+    if (this.settings.confirmCheckout && !confirm('هل أنت متأكد من تسجيل المغادرة؟')) {
+      return;
+    }
+    
+    const checkInTime = new Date(`${today}T${record.checkIn}`);
+    const checkOutTime = now;
+    const hours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
+    
+    if (hours < 0.016) {
+      if (!confirm('المدة بين الحضور والمغادرة أقل من دقيقة. هل أنت متأكد من تسجيل المغادرة؟')) {
+        return;
+      }
+    }
+    
+    record.checkOut = time;
+    record.hours = hours.toFixed(2);
+    record.status = 'present';
+    
+    this.saveAllData();
+    
+    document.getElementById('checkOutTime').textContent = time;
+    document.getElementById('checkOutBtn').disabled = true;
+    document.getElementById('checkInBtn').disabled = true;
+    document.getElementById('attendanceStatus').textContent = 
+      `تم تسجيل المغادرة الساعة ${time} (${record.hours} ساعة)`;
+    document.getElementById('attendanceStatus').style.color = 'var(--danger)';
+    
+    this.showAlert('تم تسجيل المغادرة بنجاح', 'success');
+    this.updateTodayStats();
+    this.updateAttendanceTable();
+  }
+  
+  updateTodayAttendance() {
+    if (!this.currentUser) return;
+    
+    const today = this.getTodayDate();
+    const record = this.attendanceRecords.find(record => 
+      record.date === today && record.userId === this.currentUser.id
+    );
+    
+    document.getElementById('checkInBtn').disabled = false;
+    document.getElementById('checkOutBtn').disabled = true;
+    document.getElementById('checkInTime').textContent = '-';
+    document.getElementById('checkOutTime').textContent = '-';
+    document.getElementById('attendanceStatus').textContent = 'لم يتم تسجيل الحضور اليوم';
+    document.getElementById('attendanceStatus').style.color = '';
+    
+    if (record) {
+      if (record.checkIn) {
+        document.getElementById('checkInTime').textContent = record.checkIn;
+        document.getElementById('checkInBtn').disabled = true;
+      }
+      
+      if (record.checkOut) {
+        document.getElementById('checkOutTime').textContent = record.checkOut;
+        document.getElementById('checkOutBtn').disabled = true;
+        document.getElementById('attendanceStatus').textContent = 
+          `تم تسجيل المغادرة الساعة ${record.checkOut} (${record.hours} ساعة)`;
+        document.getElementById('attendanceStatus').style.color = 'var(--danger)';
+      } else if (record.checkIn) {
+        document.getElementById('checkOutBtn').disabled = false;
+        document.getElementById('attendanceStatus').textContent = 
+          `تم تسجيل الحضور الساعة ${record.checkIn}`;
+        document.getElementById('attendanceStatus').style.color = 'var(--success)';
+      }
+    }
+  }
+  
+  updateTodayStats() {
+    if (!this.currentUser) return;
+    
+    const today = this.getTodayDate();
+    const todayRecord = this.attendanceRecords.find(record => 
+      record.date === today && record.userId === this.currentUser.id
+    );
+    
+    document.getElementById('todayHours').textContent = todayRecord?.hours || 0;
+    
+    const workDays = this.attendanceRecords.filter(record => 
+      record.userId === this.currentUser.id && record.status === 'present'
+    ).length;
+    document.getElementById('workDaysCount').textContent = workDays;
+    
+    const startDate = new Date(this.currentUser.firstWorkDay);
+    const todayDate = new Date();
+    const totalDays = Math.ceil((todayDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    const attendanceRate = totalDays > 0 ? Math.round((workDays / totalDays) * 100) : 0;
+    document.getElementById('attendanceRate').textContent = `${attendanceRate}%`;
+  }
+  
+  // ======================= وظائف التصحيح =======================
+  correctTodayAttendance() {
+    if (!this.currentUser) {
+      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
+      return;
+    }
+    
+    const today = this.getTodayDate();
+    const recordIndex = this.attendanceRecords.findIndex(record => 
+      record.date === today && record.userId === this.currentUser.id
+    );
+    
+    if (recordIndex === -1) {
+      this.showAlert('لا يوجد سجل حضور لهذا اليوم', 'warning');
+      return;
+    }
+    
+    const record = this.attendanceRecords[recordIndex];
+    
+    const newCheckIn = prompt('تعديل وقت الحضور (hh:mm):', record.checkIn || '08:00');
+    const newCheckOut = prompt('تعديل وقت المغادرة (hh:mm):', record.checkOut || '');
+    
+    if (newCheckIn) {
+      if (!this.isValidTime(newCheckIn)) {
+        this.showAlert('وقت الحضور غير صحيح', 'danger');
+        return;
+      }
+      record.checkIn = newCheckIn;
+    }
+    
+    if (newCheckOut) {
+      if (!this.isValidTime(newCheckOut)) {
+        this.showAlert('وقت المغادرة غير صحيح', 'danger');
+        return;
+      }
+      record.checkOut = newCheckOut;
+      
+      if (record.checkIn) {
+        const checkInTime = new Date(`${today}T${record.checkIn}`);
+        const checkOutTime = new Date(`${today}T${record.checkOut}`);
+        const hours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
+        record.hours = hours.toFixed(2);
+      }
+    } else {
+      record.checkOut = null;
+      record.hours = 0;
+    }
+    
+    this.attendanceRecords[recordIndex] = record;
+    this.saveAllData();
+    
+    this.showAlert('تم تصحيح السجل بنجاح', 'success');
+    this.updateTodayAttendance();
+    this.updateTodayStats();
+  }
+  
+  isValidTime(timeString) {
+    const regex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    return regex.test(timeString);
+  }
+  
+  deleteTodayRecord() {
+    if (!this.currentUser) {
+      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
+      return;
+    }
+    
+    const today = this.getTodayDate();
+    const recordIndex = this.attendanceRecords.findIndex(record => 
+      record.date === today && record.userId === this.currentUser.id
+    );
+    
+    if (recordIndex === -1) {
+      this.showAlert('لا يوجد سجل حضور لهذا اليوم', 'warning');
+      return;
+    }
+    
+    if (!confirm('هل أنت متأكد من حذف سجل اليوم؟')) {
+      return;
+    }
+    
+    this.attendanceRecords.splice(recordIndex, 1);
+    this.saveAllData();
+    
+    document.getElementById('checkInTime').textContent = '-';
+    document.getElementById('checkOutTime').textContent = '-';
+    document.getElementById('checkInBtn').disabled = false;
+    document.getElementById('checkOutBtn').disabled = true;
+    document.getElementById('attendanceStatus').textContent = 'لم يتم تسجيل الحضور اليوم';
+    document.getElementById('attendanceStatus').style.color = '';
+    document.getElementById('todayHours').textContent = '0';
+    
+    this.showAlert('تم حذف سجل اليوم بنجاح', 'success');
+    this.updateTodayStats();
+    this.updateAttendanceTable();
+  }
+  
+  // ======================= دوال مساعدة =======================
+  getGreeting() {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'صباح الخير';
+    if (hour < 18) return 'مساء الخير';
+    return 'مساء الخير';
+  }
+  
+  getTodayDate() {
+    return new Date().toISOString().split('T')[0];
+  }
+  
+  formatDate(date) {
+    if (typeof date === 'string') return date;
+    return date.toISOString().split('T')[0];
+  }
+  
+  // ======================= وظائف أخرى =======================
+  saveOvertime() {
+    if (!this.currentUser) {
+      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
+      return;
+    }
+    
+    const date = document.getElementById('otDate').value;
+    const hours = document.getElementById('otHours').value;
+    const type = document.getElementById('otType').value;
+    
+    if (!date || !hours) {
+      this.showAlert('يرجى تعبئة جميع الحقول', 'danger');
+      return;
+    }
+    
+    this.overtimeRecords.push({
+      id: Date.now(),
+      userId: this.currentUser.id,
+      date,
+      hours: parseFloat(hours),
+      type,
+      timestamp: new Date().toISOString()
+    });
+    
+    this.saveAllData();
+    
+    document.getElementById('otDate').value = this.getTodayDate();
+    document.getElementById('otHours').value = '';
+    
+    this.showAlert('تم إضافة الوقت الإضافي بنجاح', 'success');
+  }
+  
+  updateAttendanceTable() {
+    if (!this.currentUser) return;
+    
+    const tableBody = document.getElementById('attendanceTableBody');
+    const noAttendance = document.getElementById('noAttendance');
+    
+    tableBody.innerHTML = '';
+    
+    const userRecords = this.attendanceRecords
+      .filter(record => record.userId === this.currentUser.id)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    if (userRecords.length === 0) {
+      tableBody.classList.add('hidden');
+      noAttendance.classList.remove('hidden');
+      return;
+    }
+    
+    tableBody.classList.remove('hidden');
+    noAttendance.classList.add('hidden');
+    
+    userRecords.forEach(record => {
+      const row = document.createElement('tr');
+      row.classList.add(record.status === 'present' ? 'present' : 'absent');
+      
+      const dayName = new Date(record.date).toLocaleDateString('ar-SA', { weekday: 'long' });
+      
+      row.innerHTML = `
+        <td>${record.date}</td>
+        <td>${dayName}</td>
+        <td>${record.checkIn || '-'}</td>
+        <td>${record.checkOut || '-'}</td>
+        <td>${record.hours || 0} ساعة</td>
+        <td>
+          <span class="${record.status === 'present' ? 'workday' : 'holiday'}">
+            ${record.status === 'present' ? 'حاضر' : 'غائب'}
+          </span>
+        </td>
+        <td>
+          <button class="btn-sm btn-warning" onclick="app.editAttendanceRecord(${record.id})">✏️</button>
+        </td>
+      `;
+      
+      tableBody.appendChild(row);
+    });
+  }
+  
+  editAttendanceRecord(recordId) {
+    const record = this.attendanceRecords.find(r => r.id === recordId);
+    if (!record) return;
+    
+    const newCheckIn = prompt('تعديل وقت الحضور:', record.checkIn);
+    const newCheckOut = prompt('تعديل وقت المغادرة:', record.checkOut);
+    
+    if (newCheckIn && this.isValidTime(newCheckIn)) {
+      record.checkIn = newCheckIn;
+    }
+    
+    if (newCheckOut && this.isValidTime(newCheckOut)) {
+      record.checkOut = newCheckOut;
+      
+      if (record.checkIn) {
+        const checkInTime = new Date(`${record.date}T${record.checkIn}`);
+        const checkOutTime = new Date(`${record.date}T${record.checkOut}`);
+        const hours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
+        record.hours = hours.toFixed(2);
+      }
+    }
+    
+    this.saveAllData();
+    this.updateAttendanceTable();
+    this.showAlert('تم تعديل السجل بنجاح', 'success');
+  }
+  
+  // ======================= إدارة المستخدمين =======================
+  loginUser() {
+    const userId = document.getElementById('userSelect').value;
+    
+    if (!userId) {
+      this.showAlert('يرجى اختيار مستخدم', 'warning');
+      return;
+    }
+    
+    const user = this.users.find(u => u.id === userId);
+    if (user) {
+      this.currentUser = user;
+      this.saveAllData();
+      this.showPage('home');
+      this.updateHomePage();
+      this.showAlert(this.getGreetingWithTitle(), 'success');
+    }
+  }
+  
+  switchUser() {
+    this.showPage('userSelection');
+  }
+  
+  logout() {
+    if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+      this.currentUser = null;
+      localStorage.removeItem(this.keys.currentUser);
+      this.showPage('userSelection');
+      this.showAlert('تم تسجيل الخروج', 'info');
+    }
+  }
+  
+  toggleTheme() {
+    this.settings.darkMode = !this.settings.darkMode;
+    this.saveAllData();
+    this.applySettings();
+  }
+  
+  applySettings() {
+    if (this.settings.darkMode) {
+      document.body.classList.add('dark-mode');
+      document.getElementById('themeIcon').textContent = '🌙';
+    } else {
+      document.body.classList.remove('dark-mode');
+      document.getElementById('themeIcon').textContent = '☀️';
+    }
+  }
+  
+  showPage(pageName) {
+    const titles = {
+      'userSelection': 'اختيار المستخدم',
+      'home': 'الرئيسية',
+      'attendance': 'سجلات الحضور',
+      'calendar': 'تقويم الشهر',
+      'overtime': 'الوقت الإضافي',
+      'reports': 'التقارير',
+      'profile': 'الملف الشخصي',
+      'users': 'المستخدمين',
+      'settings': 'الإعدادات'
+    };
+    
+    document.getElementById('pageTitle').textContent = titles[pageName] || pageName;
+    
+    document.querySelectorAll('.page').forEach(page => {
+      page.classList.remove('active');
+    });
+    
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.remove('active');
+    });
+    
+    document.querySelectorAll('.sidebar-menu a').forEach(item => {
+      item.classList.remove('active');
+    });
+    
+    document.getElementById(pageName + 'Page').classList.add('active');
+    
+    document.querySelector(`.nav-item[data-page="${pageName}"]`)?.classList.add('active');
+    document.querySelector(`.sidebar-menu a[data-page="${pageName}"]`)?.classList.add('active');
+    
+    this.updatePageContent(pageName);
+  }
+  
+  updatePageContent(pageName) {
+    switch(pageName) {
+      case 'home':
+        this.updateHomePage();
+        break;
+      case 'attendance':
+        this.updateAttendanceTable();
+        break;
+      case 'calendar':
+        this.generateMonthCalendar();
+        break;
+      case 'profile':
+        this.updateProfilePage();
+        break;
+      case 'settings':
+        this.updateSettingsPage();
+        break;
+      case 'users':
+        this.loadUsersList();
+        break;
+    }
+  }
+  
+  updateUsersDropdown() {
+    const select = document.getElementById('userSelect');
+    select.innerHTML = '<option value="">-- اختر مستخدم --</option>';
+    
+    this.users.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.id;
+      option.textContent = `${user.username} (${user.role})`;
+      if (this.currentUser && user.id === this.currentUser.id) {
+        option.selected = true;
+      }
+      select.appendChild(option);
+    });
+  }
+  
+  setDefaultDates() {
+    const today = this.getTodayDate();
+    document.getElementById('newFirstWorkDay').value = today;
+    document.getElementById('otDate').value = today;
+    document.getElementById('reportFromDate').value = today;
+    document.getElementById('reportToDate').value = today;
+  }
+  
+  toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    
+    sidebar.classList.toggle('open');
+    backdrop.classList.toggle('show');
+  }
+  
+  showAlert(message, type = 'info') {
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.innerHTML = `
+      ${message}
+      <button class="header-btn" style="color: var(--gray);">✕</button>
     `;
     
-    // إنشاء ملف وتنزيله
-    const blob = new Blob([reportContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `تقرير_${userData.name}_${new Date().toISOString().split('T')[0]}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    document.body.appendChild(alert);
     
-    showAlert("تم إنشاء التقرير بنجاح", "success");
-  }
-
-  function showAlert(message, type) {
-    const alert = document.createElement("div");
-    alert.className = `alert alert-${type}`;
-    alert.textContent = message;
-    
-    document.querySelector(".container").insertBefore(alert, document.querySelector(".container").firstChild);
+    alert.querySelector('button').addEventListener('click', () => {
+      alert.remove();
+    });
     
     setTimeout(() => {
-      alert.remove();
+      if (alert.parentElement) {
+        alert.remove();
+      }
     }, 3000);
   }
-
-  function loginUser(name, role, firstWorkDay) {
-    userData = { name, role, firstWorkDay };
-    localStorage.setItem(userKey, JSON.stringify(userData));
-    
-    loginForm.classList.add("hidden");
-    mainContent.classList.remove("hidden");
-    sidebarToggle.classList.remove("hidden");
-    
-    showGreeting();
-    generateSchedule();
+  
+  checkCurrentUser() {
+    if (this.currentUser) {
+      this.showPage('home');
+    } else {
+      this.showPage('userSelection');
+    }
   }
-
-  // تسجيل مستخدم جديد
-  document.getElementById("registerBtn").addEventListener("click", () => {
-    const name = document.getElementById("username").value.trim();
-    const role = document.getElementById("role").value;
-    const firstWorkDay = document.getElementById("firstWorkDay").value;
+  
+  updateSettingsPage() {
+    document.getElementById('darkModeToggle').checked = this.settings.darkMode;
+    document.getElementById('notificationsToggle').checked = this.settings.notifications;
+    document.getElementById('attendanceReminder').checked = this.settings.attendanceReminder;
+    document.getElementById('confirmCheckout').checked = this.settings.confirmCheckout;
+    document.getElementById('reminderTime').value = this.settings.reminderTime;
+  }
+  
+  loadUsersList() {
+    const container = document.getElementById('usersListContainer');
+    const noUsers = document.getElementById('noUsers');
     
-    if (!name || !firstWorkDay) {
-      showAlert("يرجى إكمال جميع البيانات", "danger");
+    if (this.users.length === 0) {
+      container.innerHTML = '';
+      noUsers.classList.remove('hidden');
       return;
     }
     
-    loginUser(name, role, firstWorkDay);
-  });
-
-  // حفظ الوقت الإضافي
-  saveOTBtn.addEventListener("click", saveOvertime);
-
-  // إنشاء تقرير
-  reportSidebarBtn.addEventListener("click", generateReport);
-
-  // إعادة التعيين
-  resetSidebarBtn.addEventListener("click", () => {
-    if (confirm("هل أنت متأكد من أنك تريد إعادة التعيين؟ سيتم حذف جميع البيانات.")) {
-      localStorage.removeItem(userKey);
-      localStorage.removeItem(attendanceKey);
-      localStorage.removeItem(overtimeKey);
+    noUsers.classList.add('hidden');
+    container.innerHTML = '';
+    
+    const searchTerm = document.getElementById('searchUsers').value.toLowerCase();
+    
+    this.users.forEach(user => {
+      if (searchTerm && !user.username.toLowerCase().includes(searchTerm) && 
+          !user.role.toLowerCase().includes(searchTerm)) {
+        return;
+      }
       
-      loginForm.classList.remove("hidden");
-      mainContent.classList.add("hidden");
-      greetingDiv.classList.add("hidden");
-      sidebarToggle.classList.add("hidden");
-      document.body.classList.remove("sidebar-open");
-      sidebarToggle.textContent = "☰";
-      sidebarToggle.classList.remove("close");
+      const userCard = document.createElement('div');
+      userCard.className = 'user-card';
+      if (this.currentUser && user.id === this.currentUser.id) {
+        userCard.classList.add('current-user');
+      }
       
-      userData = null;
-      attendanceData = {};
-      overtimeData = [];
+      const userPhoto = this.getUserPhoto(user.id);
       
-      document.getElementById("username").value = "";
-      document.getElementById("firstWorkDay").value = "";
-    }
-  });
-
-  // إذا كان هناك مستخدم مسجل بالفعل
-  if (userData) {
-    loginForm.classList.add("hidden");
-    mainContent.classList.remove("hidden");
-    sidebarToggle.classList.remove("hidden");
-    showGreeting();
-    generateSchedule();
+      userCard.innerHTML = `
+        <div class="d-flex align-center gap-3">
+          <div>
+            ${userPhoto ? 
+              `<img src="${userPhoto.data}" class="user-avatar" alt="${user.username}">` :
+              `<div class="user-avatar-placeholder">${user.username.charAt(0).toUpperCase()}</div>`
+            }
+          </div>
+          <div class="flex-1">
+            <h4>${user.username}</h4>
+            <p class="text-muted">${user.role}</p>
+            <small>${user.phone}</small>
+          </div>
+          <div>
+            <button class="btn-sm btn-primary" onclick="app.switchToUser('${user.id}')">
+              <span class="icon icon-switch"></span>
+            </button>
+          </div>
+        </div>
+      `;
+      
+      container.appendChild(userCard);
+    });
   }
-
-  // القائمة الجانبية
-  sidebarToggle.addEventListener("click", () => {
-    document.body.classList.toggle("sidebar-open");
+  
+  switchToUser(userId) {
+    const user = this.users.find(u => u.id === userId);
+    if (user) {
+      this.currentUser = user;
+      this.saveAllData();
+      this.showPage('home');
+      this.updateHomePage();
+      this.showAlert(this.getGreetingWithTitle(), 'success');
+    }
+  }
+  
+  resetAllData() {
+    if (!confirm('⚠️ تحذير: هل أنت متأكد من مسح جميع البيانات؟\nهذا الإجراء لا يمكن التراجع عنه.')) return;
     
-    // تغيير الأيقونة عند فتح/إغلاق القائمة
-    if (document.body.classList.contains("sidebar-open")) {
-      sidebarToggle.textContent = "✕";
-      sidebarToggle.classList.add("close");
-    } else {
-      sidebarToggle.textContent = "☰";
-      sidebarToggle.classList.remove("close");
-    }
-  });
-
-  overtimeSidebarBtn.addEventListener("click", () => {
-    scrollToOvertime();
-    document.body.classList.remove("sidebar-open");
-    sidebarToggle.textContent = "☰"; // إعادة الأيقونة إلى وضع القائمة
-    sidebarToggle.classList.remove("close");
-  });
-
-  // إضافة حدث النقر خارج القائمة لإغلاقها
-  document.addEventListener("click", (e) => {
-    if (document.body.classList.contains("sidebar-open") && 
-        !sidebar.contains(e.target) && 
-        e.target !== sidebarToggle) {
-      document.body.classList.remove("sidebar-open");
-      sidebarToggle.textContent = "☰";
-      sidebarToggle.classList.remove("close");
-    }
-  });
-
-  // تبديل الوضع الداكن
-  themeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
+    localStorage.clear();
+    this.users = [];
+    this.currentUser = null;
+    this.attendanceRecords = [];
+    this.overtimeRecords = [];
+    this.workSchedule = {};
+    this.userPhotos = {};
+    this.settings = { 
+      darkMode: false, 
+      notifications: true, 
+      attendanceReminder: true,
+      confirmCheckout: true,
+      reminderTime: '08:00'
+    };
     
-    if (document.body.classList.contains("dark")) {
-      themeToggle.textContent = "🌙";
-      localStorage.setItem("darkMode", "enabled");
-    } else {
-      themeToggle.textContent = "🌞";
-      localStorage.setItem("darkMode", "disabled");
+    this.showPage('userSelection');
+    this.updateUsersDropdown();
+    this.showAlert('تم مسح جميع البيانات', 'info');
+  }
+  
+  // ======================= الأحداث =======================
+  setupEventListeners() {
+    document.getElementById('registerBtn').addEventListener('click', () => this.registerNewUser());
+    
+    document.getElementById('registerPhotoUpload').addEventListener('click', () => {
+      document.getElementById('registerPhotoInput').click();
+    });
+    
+    document.getElementById('registerPhotoInput').addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const preview = document.getElementById('registerPhotoPreview');
+          preview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      }
+    });
+    
+    document.getElementById('loginBtn').addEventListener('click', () => this.loginUser());
+    document.getElementById('switchUserBtn').addEventListener('click', () => this.switchUser());
+    
+    document.getElementById('sidebarToggle').addEventListener('click', () => this.toggleSidebar());
+    document.getElementById('closeSidebar').addEventListener('click', () => this.toggleSidebar());
+    document.getElementById('sidebarBackdrop').addEventListener('click', () => this.toggleSidebar());
+    
+    document.querySelectorAll('.sidebar-menu a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = link.getAttribute('data-page');
+        this.showPage(page);
+        this.toggleSidebar();
+      });
+    });
+    
+    document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = item.getAttribute('data-page');
+        this.showPage(page);
+      });
+    });
+    
+    document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
+    document.getElementById('darkModeToggle').addEventListener('change', (e) => {
+      this.settings.darkMode = e.target.checked;
+      this.saveAllData();
+      this.applySettings();
+    });
+    
+    document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
+    document.getElementById('checkInBtn').addEventListener('click', () => this.checkIn());
+    document.getElementById('checkOutBtn').addEventListener('click', () => this.checkOut());
+    document.getElementById('correctAttendanceBtn').addEventListener('click', () => this.correctTodayAttendance());
+    document.getElementById('deleteTodayRecord').addEventListener('click', () => this.deleteTodayRecord());
+    
+    document.getElementById('setWorkDayBtn').addEventListener('click', () => {
+      if (!this.selectedDate) {
+        this.showAlert('يرجى اختيار تاريخ أولاً', 'warning');
+        return;
+      }
+      const date = new Date(this.selectedDate);
+      this.setWorkDay(date, true);
+      this.showAlert('تم تعيين اليوم كيوم دوام', 'success');
+    });
+    
+    document.getElementById('setHolidayBtn').addEventListener('click', () => {
+      if (!this.selectedDate) {
+        this.showAlert('يرجى اختيار تاريخ أولاً', 'warning');
+        return;
+      }
+      const date = new Date(this.selectedDate);
+      this.setWorkDay(date, false);
+      this.showAlert('تم تعيين اليوم كيوم عطلة', 'success');
+    });
+    
+    document.getElementById('saveOTBtn').addEventListener('click', () => this.saveOvertime());
+    document.getElementById('clearOTBtn').addEventListener('click', () => {
+      document.getElementById('otDate').value = this.getTodayDate();
+      document.getElementById('otHours').value = '';
+    });
+    
+    document.getElementById('changePhotoBtn')?.addEventListener('click', () => {
+      document.getElementById('profilePhotoInput').click();
+    });
+    
+    document.getElementById('profilePhotoInput')?.addEventListener('change', async (e) => {
+      if (e.target.files && e.target.files[0]) {
+        const photo = await this.addUserPhoto(e.target.files[0]);
+        if (photo) {
+          this.showAlert('تم تحديث صورة الملف الشخصي', 'success');
+          this.updateProfilePage();
+          this.updateHomePage();
+        }
+      }
+    });
+    
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      this.currentMonth--;
+      if (this.currentMonth < 0) {
+        this.currentMonth = 11;
+        this.currentYear--;
+      }
+      this.generateMonthCalendar();
+    });
+    
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      this.currentMonth++;
+      if (this.currentMonth > 11) {
+        this.currentMonth = 0;
+        this.currentYear++;
+      }
+      this.generateMonthCalendar();
+    });
+    
+    document.getElementById('notificationsToggle')?.addEventListener('change', (e) => {
+      this.settings.notifications = e.target.checked;
+      this.saveAllData();
+    });
+    
+    document.getElementById('attendanceReminder')?.addEventListener('change', (e) => {
+      this.settings.attendanceReminder = e.target.checked;
+      this.saveAllData();
+    });
+    
+    document.getElementById('confirmCheckout')?.addEventListener('change', (e) => {
+      this.settings.confirmCheckout = e.target.checked;
+      this.saveAllData();
+    });
+    
+    document.getElementById('reminderTime')?.addEventListener('change', (e) => {
+      this.settings.reminderTime = e.target.value;
+      this.saveAllData();
+    });
+    
+    document.getElementById('exportDataBtn')?.addEventListener('click', () => this.exportUserData());
+    document.getElementById('importDataBtn')?.addEventListener('click', () => this.importUserData());
+    document.getElementById('searchUsers')?.addEventListener('input', () => this.loadUsersList());
+    document.getElementById('resetBtn').addEventListener('click', () => this.resetAllData());
+    document.getElementById('backupBtn').addEventListener('click', () => this.createBackup());
+    
+    document.getElementById('reportPeriod').addEventListener('change', (e) => {
+      const customRange = document.getElementById('customDateRange');
+      if (e.target.value === 'custom') {
+        customRange.classList.remove('hidden');
+      } else {
+        customRange.classList.add('hidden');
+      }
+    });
+    
+    document.getElementById('generateReport').addEventListener('click', () => this.generateReport());
+    document.getElementById('exportReport').addEventListener('click', () => this.exportReport());
+  }
+  
+  // ======================= وظائف إضافية =======================
+  exportUserData() {
+    if (!this.currentUser) return;
+    
+    const userData = {
+      user: this.currentUser,
+      attendance: this.attendanceRecords.filter(r => r.userId === this.currentUser.id),
+      overtime: this.overtimeRecords.filter(r => r.userId === this.currentUser.id),
+      workSchedule: this.workSchedule[this.currentUser.id] || {},
+      exportDate: new Date().toISOString()
+    };
+    
+    const dataStr = JSON.stringify(userData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `attendance_data_${this.currentUser.username}_${this.getTodayDate()}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    this.showAlert('تم تصدير بياناتك بنجاح', 'success');
+  }
+  
+  importUserData() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          
+          if (!data.user || !data.user.id) {
+            this.showAlert('ملف غير صحيح', 'danger');
+            return;
+          }
+          
+          if (confirm('سيتم استيراد البيانات واستبدال البيانات الحالية. هل أنت متأكد؟')) {
+            this.currentUser = data.user;
+            
+            const existingUserIndex = this.users.findIndex(u => u.id === data.user.id);
+            if (existingUserIndex !== -1) {
+              this.users[existingUserIndex] = data.user;
+            } else {
+              this.users.push(data.user);
+            }
+            
+            this.attendanceRecords = this.attendanceRecords.filter(r => r.userId !== data.user.id);
+            this.attendanceRecords.push(...data.attendance);
+            
+            this.overtimeRecords = this.overtimeRecords.filter(r => r.userId !== data.user.id);
+            this.overtimeRecords.push(...data.overtime);
+            
+            this.workSchedule[data.user.id] = data.workSchedule;
+            
+            this.saveAllData();
+            this.updateHomePage();
+            this.showAlert('تم استيراد البيانات بنجاح', 'success');
+          }
+        } catch (error) {
+          this.showAlert('خطأ في قراءة الملف', 'danger');
+        }
+      };
+      reader.readAsText(file);
+    };
+    
+    input.click();
+  }
+  
+  createBackup() {
+    const allData = {
+      users: this.users,
+      attendance: this.attendanceRecords,
+      overtime: this.overtimeRecords,
+      workSchedule: this.workSchedule,
+      userPhotos: this.userPhotos,
+      settings: this.settings,
+      backupDate: new Date().toISOString()
+    };
+    
+    const dataStr = JSON.stringify(allData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `attendance_backup_${this.getTodayDate()}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    this.showAlert('تم إنشاء نسخة احتياطية بنجاح', 'success');
+  }
+  
+  generateReport() {
+    if (!this.currentUser) {
+      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
+      return;
     }
-  });
+    
+    const period = document.getElementById('reportPeriod').value;
+    let fromDate, toDate;
+    
+    const today = new Date();
+    
+    switch(period) {
+      case 'week':
+        fromDate = new Date(today);
+        fromDate.setDate(today.getDate() - 7);
+        toDate = today;
+        break;
+      case 'month':
+        fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        toDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        break;
+      case 'quarter':
+        const quarter = Math.floor(today.getMonth() / 3);
+        fromDate = new Date(today.getFullYear(), quarter * 3, 1);
+        toDate = new Date(today.getFullYear(), (quarter + 1) * 3, 0);
+        break;
+      case 'year':
+        fromDate = new Date(today.getFullYear(), 0, 1);
+        toDate = new Date(today.getFullYear(), 11, 31);
+        break;
+      case 'custom':
+        fromDate = new Date(document.getElementById('reportFromDate').value);
+        toDate = new Date(document.getElementById('reportToDate').value);
+        break;
+      default:
+        fromDate = new Date(today);
+        fromDate.setDate(today.getDate() - 30);
+        toDate = today;
+    }
+    
+    const userRecords = this.attendanceRecords.filter(record => {
+      const recordDate = new Date(record.date);
+      return record.userId === this.currentUser.id && 
+             recordDate >= fromDate && 
+             recordDate <= toDate;
+    });
+    
+    const totalDays = Math.ceil((toDate - fromDate) / (1000 * 60 * 60 * 24)) + 1;
+    const presentDays = userRecords.filter(r => r.status === 'present').length;
+    const absentDays = totalDays - presentDays;
+    const totalHours = userRecords.reduce((sum, record) => sum + parseFloat(record.hours || 0), 0);
+    const averageHours = presentDays > 0 ? totalHours / presentDays : 0;
+    
+    const reportStats = document.getElementById('reportStats');
+    reportStats.innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">${presentDays}</div>
+          <div class="stat-label">أيام حضور</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${absentDays}</div>
+          <div class="stat-label">أيام غياب</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${totalHours.toFixed(2)}</div>
+          <div class="stat-label">ساعات عمل</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${averageHours.toFixed(2)}</div>
+          <div class="stat-label">متوسط يومي</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${Math.round((presentDays / totalDays) * 100)}%</div>
+          <div class="stat-label">نسبة حضور</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">${userRecords.length}</div>
+          <div class="stat-label">إجمالي التسجيلات</div>
+        </div>
+      </div>
+      <div class="mt-3">
+        <h4>ملخص التقرير:</h4>
+        <p>الفترة: ${fromDate.toLocaleDateString('ar-SA')} إلى ${toDate.toLocaleDateString('ar-SA')}</p>
+        <p>المستخدم: ${this.currentUser.username} (${this.currentUser.role})</p>
+        <p>مجموع أيام الفترة: ${totalDays} يوم</p>
+      </div>
+    `;
+    
+    this.showAlert('تم إنشاء التقرير بنجاح', 'success');
+  }
+  
+  exportReport() {
+    if (!this.currentUser) return;
+    
+    const reportStats = document.getElementById('reportStats').innerText;
+    const reportData = `
+تقرير الحضور
+==============
+المستخدم: ${this.currentUser.username}
+الدور: ${this.currentUser.role}
+تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}
 
-  // إصلاح: جعل الدوال global بشكل صحيح
-  window.editOvertime = editOvertime;
-  window.deleteOvertime = deleteOvertime;
-  window.scrollToOvertime = scrollToOvertime;
+${reportStats}
 
-});
+--- نهاية التقرير ---
+    `;
+    
+    const dataUri = 'data:text/plain;charset=utf-8,'+ encodeURIComponent(reportData);
+    const exportFileDefaultName = `attendance_report_${this.currentUser.username}_${this.getTodayDate()}.txt`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    this.showAlert('تم تصدير التقرير بنجاح', 'success');
+  }
+}
+
+// ======================= تهيئة التطبيق =======================
+const app = new WorkScheduleAttendanceSystem();
+window.app = app;
+
+// تحديث الوقت كل دقيقة
+setInterval(() => {
+  if (app.currentUser) {
+    app.updateTodayAttendance();
+  }
+}, 60000);
+
+// تذكير الحضور
+setInterval(() => {
+  if (app.currentUser && app.settings.attendanceReminder) {
+    const now = new Date();
+    const currentTime = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+    
+    if (currentTime === app.settings.reminderTime) {
+      const today = app.getTodayDate();
+      const hasCheckedIn = app.attendanceRecords.some(record => 
+        record.date === today && record.userId === app.currentUser.id && record.checkIn
+      );
+      
+      if (!hasCheckedIn) {
+        app.showAlert('تذكير: لم تسجل الحضور اليوم بعد', 'warning');
+      }
+    }
+  }
+}, 60000);
 </script>
 </body>
 </html>

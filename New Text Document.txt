@@ -2,10 +2,64 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<!-- تفعيل وضع الشاشة الكاملة على iOS -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- أيقونة الموقع عند إضافة الشاشة الرئيسية -->
+<link rel="apple-touch-icon" href="img/favicon.png">
+<!-- اختيار اسم الموقع عند إضافة الشاشة الرئيسية -->
+<meta name="apple-mobile-web-app-title" content="اسم موقعك">
+<!-- لون شريط الحالة عند فتح التطبيق -->
+<meta name="theme-color" content="#ffffff">
 <title>Attendance & Overtime Tracker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAWlBMVEUAAAD///////////////////////////////////////////////////////////8gJSjZAAAAHnRSTlMAgECQwCCQYCDw8JAgQJBwQGCgQPDQ0JBQYDCgUGCrCbbpAAAAmElEQVQ4y2NggAIGBkYGFhZWNnYOBkZObh5ePn4BQSFhEVExcQlJKQZJaRlZOXkFRSUVVTU1dQ1NBi1tHV09fQNDI2MTUzNzC0srBmsbWzt7B0cnZxdXN3cPTwYvbx9fP/+AwKDgkNCw8AhGhsiocEDh6JjYuPgERgYgSEpOSU1Lz8jMys5hYGjty88vKCwqLiktYwAAnIsW+WlW9q0AAAAASUVORK5CYII=">
+<link rel="icon" type="image/png" href="img/favicon.png">
 <style>
+
+
+
+
+/* =======================
+   تفعيل التوافق مع الشاشات الصغيرة
+======================= */
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* الصور تصبح مرنة */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* نصوص الحاويات تتكيف */
+.container, header, main, footer {
+    width: 100%;
+    box-sizing: border-box;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* الأزرار تبقى بنفس مكانها لكن لا تتجاوز الشاشة */
+button {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Media query للموبايل أصغر من 600px */
+@media (max-width: 600px) {
+    body {
+        font-size: 16px; /* نصوص قابلة للقراءة */
+    }
+}
+
+
+
+
+
+
 :root {
   --primary-color: #007BFF;
   --secondary-color: #0056b3;
@@ -511,7 +565,7 @@ body.dark select {
 <body>
 
 <div class="container">
-  <h1>📅 متتبع الحضور والوقت الإضافي</h1>
+  <h1>📅 متتبع الحضور الخاص </h1>
 
   <div id="loginForm" class="card form-card">
     <h2>تسجيل حساب جديد</h2>
