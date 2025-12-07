@@ -13,7 +13,7 @@
 <!-- أيقونة الموقع عند إضافة الشاشة الرئيسية -->
 <link rel="apple-touch-icon" href="img/favicon.png">
 <!-- اختيار اسم الموقع عند إضافة الشاشة الرئيسية -->
-<meta name="apple-mobile-web-app-title" content="اسم موقعك">
+<meta name="apple-mobile-web-app-title" content="نظام الحضور">
 <!-- لون شريط الحالة عند فتح التطبيق -->
 <meta name="theme-color" content="#ffffff">
 <title>Attendance & Overtime Tracker</title>
@@ -37,6 +37,7 @@
   --border: #C7C7CC;
   --card-bg: #FFFFFF;
   --shadow: rgba(0,0,0,0.1);
+  --primary-rgb: 0, 122, 255;
 }
 
 .dark-mode {
@@ -53,6 +54,7 @@
   --border: #38383A;
   --card-bg: #2C2C2E;
   --shadow: rgba(0,0,0,0.3);
+  --primary-rgb: 10, 132, 255;
 }
 
 * {
@@ -87,6 +89,7 @@ body {
   padding: 0 15px;
   z-index: 1000;
   box-shadow: 0 2px 10px var(--shadow);
+  padding-top: env(safe-area-inset-top);
 }
 
 .header-title {
@@ -109,9 +112,10 @@ body {
 /* =============== الصفحات =============== */
 .page {
   display: none;
-  padding: 80px 15px 70px;
+  padding: 80px 15px 85px;
   min-height: 100vh;
   animation: fadeIn 0.3s ease;
+  box-sizing: border-box;
 }
 
 .page.active {
@@ -531,13 +535,13 @@ body {
   color: var(--gray);
 }
 
-/* =============== القائمة السفلية =============== */
+/* =============== القائمة السفلية - معدلة =============== */
 .bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  height: 70px;
   background: var(--card-bg);
   border-top: 1px solid var(--border);
   display: flex;
@@ -545,30 +549,56 @@ body {
   align-items: center;
   z-index: 1000;
   padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  padding: 0 5px;
 }
 
 .nav-item {
   flex: 1;
   text-align: center;
-  padding: 8px;
+  padding: 8px 2px;
   color: var(--gray);
   text-decoration: none;
   transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  min-width: 0;
+}
+
+.nav-item:active {
+  transform: scale(0.95);
+  opacity: 0.8;
 }
 
 .nav-item.active {
   color: var(--primary);
+  background: rgba(var(--primary-rgb), 0.1);
+  border-radius: 8px;
+  margin: 4px;
 }
 
 .nav-icon {
   display: block;
-  font-size: 20px;
-  margin-bottom: 4px;
+  font-size: 18px;
+  margin-bottom: 2px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  line-height: 1.2;
+  display: block;
 }
 
 /* =============== القائمة الجانبية =============== */
@@ -743,6 +773,11 @@ body {
     padding: 8px 4px;
   }
   
+  .attendance-table th:nth-child(5),
+  .attendance-table td:nth-child(5) {
+    display: none;
+  }
+  
   .calendar-date {
     font-size: 12px;
   }
@@ -755,6 +790,23 @@ body {
     width: 100px;
     height: 100px;
   }
+  
+  .bottom-nav {
+    height: 65px;
+  }
+  
+  .nav-icon {
+    font-size: 16px;
+    height: 22px;
+  }
+  
+  .nav-label {
+    font-size: 10px;
+  }
+  
+  .page {
+    padding: 75px 12px 80px;
+  }
 }
 
 @media (max-width: 360px) {
@@ -762,16 +814,54 @@ body {
     font-size: 16px;
   }
   
-  .nav-label {
-    font-size: 10px;
+  .calendar-grid {
+    gap: 3px;
+  }
+  
+  .bottom-nav {
+    height: 60px;
   }
   
   .nav-icon {
-    font-size: 18px;
+    font-size: 15px;
+    height: 20px;
+    margin-bottom: 1px;
   }
   
-  .calendar-grid {
-    gap: 3px;
+  .nav-label {
+    font-size: 9px;
+    line-height: 1.1;
+  }
+  
+  .page {
+    padding: 70px 10px 75px;
+  }
+}
+
+/* =============== تحسين للأجهزة ذات الشاشة الكبيرة =============== */
+@media (min-width: 768px) {
+  .bottom-nav {
+    height: 75px;
+    max-width: 768px;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .nav-icon {
+    font-size: 20px;
+    height: 26px;
+  }
+  
+  .nav-label {
+    font-size: 12px;
+  }
+}
+
+/* =============== تحسينات للأجهزة ذات القطع في الشاشة =============== */
+@supports (padding: max(0px)) {
+  .bottom-nav {
+    padding-bottom: max(env(safe-area-inset-bottom), 10px);
   }
 }
 
@@ -810,6 +900,7 @@ body {
 /* =============== الرموز =============== */
 .icon {
   font-family: 'Segoe UI', sans-serif;
+  line-height: 1;
 }
 
 .icon-home::before { content: "🏠"; }
@@ -1364,7 +1455,7 @@ body {
   </div>
 </div>
 
-<!-- القائمة السفلية -->
+<!-- القائمة السفلية المعدلة -->
 <div class="bottom-nav">
   <a href="#" data-page="home" class="nav-item active">
     <span class="nav-icon icon icon-home"></span>
@@ -1426,6 +1517,7 @@ class WorkScheduleAttendanceSystem {
     this.updateUsersDropdown();
     this.setDefaultDates();
     this.updateCurrentMonthYear();
+    this.adjustBottomNav();
   }
   
   updateCurrentMonthYear() {
@@ -1474,6 +1566,37 @@ class WorkScheduleAttendanceSystem {
     
     if (this.currentUser) {
       localStorage.setItem(this.keys.currentUser, this.currentUser.id);
+    }
+  }
+  
+  adjustBottomNav() {
+    const bottomNav = document.querySelector('.bottom-nav');
+    const navItems = document.querySelectorAll('.nav-item');
+    
+    if (window.innerWidth < 360) {
+      bottomNav.style.height = '60px';
+      navItems.forEach(item => {
+        const icon = item.querySelector('.nav-icon');
+        const label = item.querySelector('.nav-label');
+        if (icon) icon.style.fontSize = '15px';
+        if (label) label.style.fontSize = '9px';
+      });
+    } else if (window.innerWidth < 480) {
+      bottomNav.style.height = '65px';
+      navItems.forEach(item => {
+        const icon = item.querySelector('.nav-icon');
+        const label = item.querySelector('.nav-label');
+        if (icon) icon.style.fontSize = '16px';
+        if (label) label.style.fontSize = '10px';
+      });
+    } else {
+      bottomNav.style.height = '70px';
+      navItems.forEach(item => {
+        const icon = item.querySelector('.nav-icon');
+        const label = item.querySelector('.nav-label');
+        if (icon) icon.style.fontSize = '18px';
+        if (label) label.style.fontSize = '11px';
+      });
     }
   }
   
@@ -2670,6 +2793,11 @@ class WorkScheduleAttendanceSystem {
     
     document.getElementById('generateReport').addEventListener('click', () => this.generateReport());
     document.getElementById('exportReport').addEventListener('click', () => this.exportReport());
+    
+    // ضبط القائمة السفلية عند تغيير حجم النافذة
+    window.addEventListener('resize', () => {
+      this.adjustBottomNav();
+    });
   }
   
   // ======================= وظائف إضافية =======================
