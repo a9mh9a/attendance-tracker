@@ -7,20 +7,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#007BFF">
 <meta name="mobile-web-app-capable" content="yes">
-<!-- تفعيل وضع الشاشة الكاملة على iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<!-- أيقونة الموقع عند إضافة الشاشة الرئيسية -->
 <link rel="apple-touch-icon" href="img/favicon.png">
-<!-- اختيار اسم الموقع عند إضافة الشاشة الرئيسية -->
 <meta name="apple-mobile-web-app-title" content="نظام الحضور">
-<!-- لون شريط الحالة عند فتح التطبيق -->
-<meta name="theme-color" content="#ffffff">
-<title>Attendance & Overtime Tracker</title>
+<title>نظام متابعة الحضور والوقت الإضافي</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAWlBMVEUAAAD///////////////////////////////////////////////////////////8gJSjZAAAAHnRSTlMAgECQwCCQYCDw8JAgQJBwQGCgQPDQ0JBQYDCgUGCrCbbpAAAAmElEQVQ4y2NggAIGBkYGFhZWNnYOBkZObh5ePn4BQSFhEVExcQlJKQZJaRlZOXkFRSUVVTU1dQ1NBi1tHV09fQNDI2MTUzNzC0srBmsbWzt7B0cnZxdXN3cPTwYvbx9fP/+AwKDgkNCw8AhGhsiocEDh6JjYuPgERgYgSEpOSU1Lz8jMys5hYGjty88vKCwqLiktYwAAnIsW+WlW9q0AAAAASUVORK5CYII=">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAWlBMVEUAAAD///////////////////////////////////////////////////////////8gJSjZAAAAHnRSTlMAgECQwCCQYCDw8JAgQJBwQGCgQPDQ0JBQYDCgUGCrCbbpAAAAmElEQVQ4y2NggAIGBkYGVhZWNnYOBkZObh5ePn4BQSFhEVExcQlJKQZJaRlZOXkFRSUVVTU1dQ1NBi1tHV09fQNDI2MTUzNzC0srBmsbWzt7B0cnZxdXN3cPTwYvbx9fP/+AwKDgkNCw8AhGhsiocEDh6JjYuPgERgYgSEpOSU1Lz8jMys5hYGjty88vKCwqLiktYwAAnIsW+WlW9q0AAAAASUVORK5CYII=">
 <link rel="icon" type="image/png" href="img/favicon.png">
-<title>نظام متابعة الحضور</title>
 <style>
 /* =============== الأساسيات =============== */
 :root {
@@ -421,6 +415,15 @@ body {
   border: 2px solid var(--primary);
 }
 
+.calendar-date.manual {
+  border: 2px dashed var(--warning);
+}
+
+.calendar-date.start-day {
+  border: 3px solid var(--warning);
+  background: rgba(255, 149, 0, 0.2);
+}
+
 .calendar-date.present::after {
   content: '✓';
   position: absolute;
@@ -528,6 +531,7 @@ body {
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
+  flex-wrap: wrap;
 }
 
 .work-schedule-legend {
@@ -538,6 +542,7 @@ body {
   padding: 10px;
   background: var(--light);
   border-radius: 8px;
+  flex-wrap: wrap;
 }
 
 .legend-item {
@@ -545,6 +550,7 @@ body {
   align-items: center;
   gap: 5px;
   font-size: 12px;
+  margin: 2px 5px;
 }
 
 .legend-color {
@@ -563,6 +569,14 @@ body {
 
 .legend-color.today {
   background: var(--primary);
+}
+
+.legend-color.manual {
+  background: var(--warning);
+}
+
+.legend-color.start {
+  background: var(--warning);
 }
 
 /* =============== الإحصائيات =============== */
@@ -892,6 +906,29 @@ body {
     font-size: 12px;
     padding: 5px 1px;
   }
+  
+  .work-schedule-controls {
+    flex-direction: column;
+  }
+  
+  .work-schedule-controls .btn-sm {
+    width: 100%;
+    margin: 3px 0;
+  }
+  
+  .work-schedule-legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .legend-item {
+    margin: 2px 0;
+  }
+  
+  .start-date-info {
+    font-size: 10px;
+  }
 }
 
 @media (max-width: 360px) {
@@ -1022,6 +1059,8 @@ body {
 .icon-switch::before { content: "🔄"; }
 .icon-camera::before { content: "📷"; }
 .icon-refresh::before { content: "🔄"; }
+.icon-star::before { content: "⭐"; }
+.icon-start::before { content: "🚀"; }
 </style>
 </head>
 <body>
@@ -1106,9 +1145,8 @@ body {
       <select id="newRole" class="form-input">
         <option value="مهندس">مهندس</option>
         <option value="فني">فني</option>
-        <option value="مسؤل شفت">مسؤل شفت</option>
-        <option value="مسؤل قسم IT">مسؤل قسم IT</option>
-
+        <option value="مسؤول شفت">مسؤول شفت</option>
+        <option value="مسؤول قسم IT">مسؤول قسم IT</option>
       </select>
     </div>
     
@@ -1259,6 +1297,13 @@ body {
         <button id="setHolidayBtn" class="btn btn-danger btn-sm flex-1">
           تعيين يوم عطلة
         </button>
+        <button id="setWorkCycleBtn" class="btn btn-info btn-sm flex-1">
+          تعيين دورة
+        </button>
+        <button id="setStartDateBtn" class="btn btn-warning btn-sm flex-1">
+          <span class="icon icon-start"></span>
+          تعيين تاريخ البدء
+        </button>
       </div>
       
       <div class="calendar-grid" id="calendarGrid">
@@ -1279,6 +1324,21 @@ body {
         <div class="legend-color today"></div>
         <span>اليوم الحالي</span>
       </div>
+      <div class="legend-item">
+        <div class="legend-color manual"></div>
+        <span>معدل يدوياً</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color start"></div>
+        <span>تاريخ البدء</span>
+      </div>
+      <div class="legend-item">
+        <small>النظام: يوم عمل ← يومين راحة</small>
+      </div>
+    </div>
+    
+    <div class="start-date-info text-center mt-2" id="startDateInfo">
+      <!-- سيتم ملؤها -->
     </div>
   </div>
   
@@ -1543,8 +1603,10 @@ body {
   <div class="card">
     <div class="card-title">حول التطبيق</div>
     <p class="text-center text-muted">
-      نسخة 7.0.0<br>
+      نسخة 9.0.0<br>
       نظام متعدد المستخدمين مع تقويم الدوام<br>
+      نظام الدوام: يوم عمل ← يومين راحة<br>
+      مع تحديد تاريخ بداية الدوام<br>
       المطور: المهندس حسين محمد<br>
       © 2025 جميع الحقوق محفوظة
     </p>
@@ -1572,17 +1634,18 @@ body {
 </div>
 
 <script>
-// ======================= النظام الأساسي =======================
+// ======================= النظام الأساسي المعدل مع تحديد تاريخ البدء =======================
 class WorkScheduleAttendanceSystem {
   constructor() {
     this.keys = {
-      users: 'attendance_users_v7',
-      attendance: 'attendance_records_v7',
-      overtime: 'overtime_records_v7',
-      settings: 'app_settings_v7',
-      currentUser: 'current_user_v7',
-      workSchedule: 'work_schedule_v7',
-      userPhotos: 'user_photos_v7'
+      users: 'attendance_users_v9',
+      attendance: 'attendance_records_v9',
+      overtime: 'overtime_records_v9',
+      settings: 'app_settings_v9',
+      currentUser: 'current_user_v9',
+      workSchedule: 'work_schedule_v9',
+      userPhotos: 'user_photos_v9',
+      workStartDates: 'work_start_dates_v9'
     };
     
     this.users = [];
@@ -1591,6 +1654,7 @@ class WorkScheduleAttendanceSystem {
     this.overtimeRecords = [];
     this.workSchedule = {};
     this.userPhotos = {};
+    this.workStartDates = {};
     this.settings = {
       darkMode: false,
       notifications: true,
@@ -1614,6 +1678,9 @@ class WorkScheduleAttendanceSystem {
     this.setDefaultDates();
     this.updateCurrentMonthYear();
     this.adjustBottomNav();
+    
+    console.log('التاريخ الحالي:', this.getTodayDate());
+    console.log('نظام الدوام: يوم عمل ← يومين راحة');
   }
   
   updateCurrentMonthYear() {
@@ -1638,6 +1705,9 @@ class WorkScheduleAttendanceSystem {
     const photosData = localStorage.getItem(this.keys.userPhotos);
     this.userPhotos = photosData ? JSON.parse(photosData) : {};
     
+    const workStartDatesData = localStorage.getItem(this.keys.workStartDates);
+    this.workStartDates = workStartDatesData ? JSON.parse(workStartDatesData) : {};
+    
     const settings = localStorage.getItem(this.keys.settings);
     if (settings) {
       this.settings = JSON.parse(settings);
@@ -1658,6 +1728,7 @@ class WorkScheduleAttendanceSystem {
     localStorage.setItem(this.keys.overtime, JSON.stringify(this.overtimeRecords));
     localStorage.setItem(this.keys.workSchedule, JSON.stringify(this.workSchedule));
     localStorage.setItem(this.keys.userPhotos, JSON.stringify(this.userPhotos));
+    localStorage.setItem(this.keys.workStartDates, JSON.stringify(this.workStartDates));
     localStorage.setItem(this.keys.settings, JSON.stringify(this.settings));
     
     if (this.currentUser) {
@@ -1696,116 +1767,79 @@ class WorkScheduleAttendanceSystem {
     }
   }
   
-  // ======================= التحسينات الجديدة =======================
-  getGreetingWithTitle() {
-    const hour = new Date().getHours();
-    let greeting = '';
+  // ======================= دالات التاريخ =======================
+  getTodayDate() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  
+  formatDate(date) {
+    if (typeof date === 'string') {
+      return date;
+    }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  
+  parseDate(dateStr) {
+    const parts = dateStr.split('-');
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  }
+  
+  // ======================= نظام الدوام مع تحديد تاريخ البدء =======================
+  setWorkStartDate(date) {
+    if (!this.currentUser) return;
     
-    if (hour < 12) {
-      greeting = 'صباح الخير';
-    } else if (hour < 18) {
-      greeting = 'مساء الخير';
-    } else {
-      greeting = 'مساء الخير';
+    const userId = this.currentUser.id;
+    const dateStr = this.formatDate(date);
+    
+    this.workStartDates[userId] = dateStr;
+    this.saveAllData();
+    
+    this.showAlert(`تم تعيين ${dateStr} كتاريخ بداية الدوام`, 'success');
+    this.generateMonthCalendar();
+    this.updateStartDateInfo();
+  }
+  
+  getWorkStartDate() {
+    if (!this.currentUser) return this.parseDate('2025-01-01');
+    
+    const userId = this.currentUser.id;
+    
+    if (this.workStartDates[userId]) {
+      return this.parseDate(this.workStartDates[userId]);
     }
     
-    if (this.currentUser) {
-      const role = this.currentUser.role;
-      switch(role) {
-        case 'مهندس':
-          return `${greeting} مهندس ${this.currentUser.username}`;
-        case 'مدير':
-          return `${greeting} مدير ${this.currentUser.username}`;
-        case 'مشرف':
-          return `${greeting} مشرف ${this.currentUser.username}`;
-        case 'محاسب':
-          return `${greeting} محاسب ${this.currentUser.username}`;
-        case 'سكرتير':
-          return `${greeting} سكرتير ${this.currentUser.username}`;
-        default:
-          return `${greeting} ${this.currentUser.username}`;
-      }
-    }
-    return greeting;
+    // إذا لم يتم تحديد تاريخ، استخدم تاريخ أول يوم عمل من بيانات المستخدم
+    return this.parseDate(this.currentUser.firstWorkDay || '2025-01-01');
   }
   
-  // ======================= إدارة الصور الشخصية =======================
-  async addUserPhoto(file) {
-    if (!this.currentUser) return null;
+  // النظام: يوم واحد دوام، ثم يومين عطلة (دورة كل 3 أيام) بدءاً من تاريخ محدد
+  calculateWorkDayByDefault(date) {
+    if (!this.currentUser) return false;
     
-    try {
-      const compressedImage = await this.compressImage(file);
-      
-      const photoId = `photo_${Date.now()}`;
-      const photo = {
-        id: photoId,
-        userId: this.currentUser.id,
-        data: compressedImage,
-        uploadDate: new Date().toISOString()
-      };
-      
-      this.userPhotos[this.currentUser.id] = photo;
-      this.currentUser.profilePhotoId = photoId;
-      this.updateUser(this.currentUser);
-      
-      this.saveAllData();
-      return photo;
-      
-    } catch (error) {
-      console.error('خطأ في معالجة الصورة:', error);
-      this.showAlert('خطأ في معالجة الصورة', 'danger');
-      return null;
-    }
-  }
-  
-  compressImage(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          
-          const maxSize = 150;
-          let width = img.width;
-          let height = img.height;
-          
-          if (width > height) {
-            if (width > maxSize) {
-              height *= maxSize / width;
-              width = maxSize;
-            }
-          } else {
-            if (height > maxSize) {
-              width *= maxSize / height;
-              height = maxSize;
-            }
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
-          ctx.drawImage(img, 0, 0, width, height);
-          
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
-          resolve(compressedBase64);
-        };
-        img.onerror = reject;
-        img.src = e.target.result;
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-  
-  getUserPhoto(userId = null) {
-    const targetUserId = userId || (this.currentUser ? this.currentUser.id : null);
-    if (!targetUserId || !this.userPhotos[targetUserId]) return null;
+    const startDate = this.getWorkStartDate();
+    const targetDate = this.parseDate(this.formatDate(date));
     
-    return this.userPhotos[targetUserId];
+    // حساب عدد الأيام منذ تاريخ البدء
+    const diffTime = targetDate - startDate;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    // إذا كان التاريخ قبل تاريخ البدء، فهو عطلة
+    if (diffDays < 0) return false;
+    
+    // النظام: يوم عمل واحد، يومين عطلة (دورة كل 3 أيام)
+    const cycleDay = diffDays % 3; // 0,1,2
+    
+    // اليوم 0 فقط هو يوم عمل، الأيام 1 و 2 هي أيام عطلة
+    return cycleDay === 0;
   }
   
-  // ======================= إدارة جدول الدوام =======================
   setWorkDay(date, isWorkDay = true) {
     if (!this.currentUser) return;
     
@@ -1828,19 +1862,25 @@ class WorkScheduleAttendanceSystem {
     const dateStr = this.formatDate(date);
     const userId = this.currentUser.id;
     
-    if (!this.workSchedule[userId] || !this.workSchedule[userId][dateStr]) {
-      return this.isWorkDayByDefault(date) ? 'work' : 'holiday';
+    // إذا تم تعيين يدوي، استخدمه
+    if (this.workSchedule[userId] && this.workSchedule[userId][dateStr]) {
+      return this.workSchedule[userId][dateStr];
     }
     
-    return this.workSchedule[userId][dateStr];
+    // وإلا استخدم النظام التلقائي الجديد
+    return this.calculateWorkDayByDefault(date) ? 'work' : 'holiday';
   }
   
-  isWorkDayByDefault(date) {
-    const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-    return dayOfYear % 3 === 0;
+  isManualDay(date) {
+    if (!this.currentUser) return false;
+    
+    const dateStr = this.formatDate(date);
+    const userId = this.currentUser.id;
+    
+    return !!(this.workSchedule[userId] && this.workSchedule[userId][dateStr]);
   }
   
-  // ======================= تقويم الشهر =======================
+  // ======================= توليد التقويم المعدل =======================
   generateMonthCalendar() {
     if (!this.currentUser) return;
     
@@ -1855,7 +1895,9 @@ class WorkScheduleAttendanceSystem {
     
     const firstDay = new Date(this.currentYear, this.currentMonth, 1);
     const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
-    const today = new Date();
+    const todayStr = this.getTodayDate();
+    const workStartDate = this.getWorkStartDate();
+    const workStartDateStr = this.formatDate(workStartDate);
     
     const weekDays = ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
     
@@ -1872,9 +1914,11 @@ class WorkScheduleAttendanceSystem {
     for (let day = 1; day <= lastDay.getDate(); day++) {
       const date = new Date(this.currentYear, this.currentMonth, day);
       const dateStr = this.formatDate(date);
-      const isToday = this.formatDate(today) === dateStr;
+      const isToday = todayStr === dateStr;
       const dayType = this.getDayType(date);
       const isWorkDay = dayType === 'work';
+      const isManual = this.isManualDay(date);
+      const isWorkStart = dateStr === workStartDateStr;
       
       const attendanceRecord = this.attendanceRecords.find(record => 
         record.date === dateStr && record.userId === this.currentUser.id
@@ -1885,15 +1929,23 @@ class WorkScheduleAttendanceSystem {
       else classes += ' holiday';
       
       if (isToday) classes += ' today';
+      if (isManual) classes += ' manual';
+      if (isWorkStart) classes += ' start-day';
       
       if (attendanceRecord) {
         classes += attendanceRecord.status === 'present' ? ' present' : ' absent';
       }
       
+      let statusText = isWorkDay ? 'دوام' : 'عطلة';
+      if (isWorkStart) statusText = 'بداية';
+      
       html += `
         <div class="${classes}" data-date="${dateStr}" onclick="app.selectDate('${dateStr}')">
           <div class="date-number">${day}</div>
-          <div class="date-status">${isWorkDay ? 'دوام' : 'عطلة'}</div>
+          <div class="date-status">
+            ${statusText}
+            ${isManual ? '⭐' : ''}
+          </div>
         </div>
       `;
     }
@@ -1901,6 +1953,7 @@ class WorkScheduleAttendanceSystem {
     container.innerHTML = html;
     
     this.updateMonthStats();
+    this.updateStartDateInfo();
   }
   
   selectDate(dateStr) {
@@ -1925,10 +1978,14 @@ class WorkScheduleAttendanceSystem {
     let workDays = 0;
     let holidays = 0;
     let attendance = 0;
+    let manualDays = 0;
     
     for (let date = new Date(firstDay); date <= lastDay; date.setDate(date.getDate() + 1)) {
       const dateStr = this.formatDate(date);
       const dayType = this.getDayType(date);
+      const isManual = this.isManualDay(date);
+      
+      if (isManual) manualDays++;
       
       if (dayType === 'work') {
         workDays++;
@@ -1948,138 +2005,22 @@ class WorkScheduleAttendanceSystem {
     document.getElementById('monthAttendance').textContent = attendance;
   }
   
-  // ======================= إدارة المستخدمين =======================
-  registerNewUser() {
-    const username = document.getElementById('newUsername').value.trim();
-    const role = document.getElementById('newRole').value;
-    const firstWorkDay = document.getElementById('newFirstWorkDay').value;
-    const phone = document.getElementById('newPhone').value.trim();
+  updateStartDateInfo() {
+    const workStartDate = this.getWorkStartDate();
+    const workStartDateStr = this.formatDate(workStartDate);
     
-    if (!username || !role || !firstWorkDay) {
-      this.showAlert('يرجى تعبئة جميع الحقول الإلزامية', 'danger');
-      return;
-    }
-    
-    if (this.users.some(user => user.username === username)) {
-      this.showAlert('اسم المستخدم موجود مسبقاً', 'warning');
-      return;
-    }
-    
-    const userId = `user_${Date.now()}`;
-    
-    const newUser = {
-      id: userId,
-      username,
-      role,
-      firstWorkDay,
-      phone: phone || 'غير محدد',
-      registerDate: new Date().toISOString(),
-      isActive: true,
-      profilePhotoId: null
-    };
-    
-    this.users.push(newUser);
-    this.currentUser = newUser;
-    
-    const photoInput = document.getElementById('registerPhotoInput');
-    if (photoInput.files && photoInput.files[0]) {
-      this.addUserPhoto(photoInput.files[0])
-        .then(() => {
-          this.finalizeRegistration();
-        })
-        .catch(() => {
-          this.finalizeRegistration();
-        });
-    } else {
-      this.finalizeRegistration();
+    const infoElement = document.getElementById('startDateInfo');
+    if (infoElement) {
+      infoElement.innerHTML = `
+        <div class="alert alert-warning" style="margin: 0; padding: 10px;">
+          <strong>تاريخ بداية الدوام:</strong> ${workStartDateStr}<br>
+          <small>من هذا التاريخ يبدأ نظام: يوم عمل ← يومين راحة</small>
+        </div>
+      `;
     }
   }
   
-  finalizeRegistration() {
-    this.saveAllData();
-    
-    this.updateUsersDropdown();
-    
-    document.getElementById('newUsername').value = '';
-    document.getElementById('newPhone').value = '';
-    const preview = document.getElementById('registerPhotoPreview');
-    preview.innerHTML = '<span class="icon icon-camera"></span>';
-    
-    this.showAlert(`تم تسجيل المستخدم ${this.currentUser.username} بنجاح`, 'success');
-    this.showPage('home');
-    this.updateHomePage();
-  }
-  
-  updateUser(user) {
-    const index = this.users.findIndex(u => u.id === user.id);
-    if (index !== -1) {
-      this.users[index] = user;
-      this.saveAllData();
-    }
-  }
-  
-  // ======================= الواجهة =======================
-  updateHomePage() {
-    if (!this.currentUser) return;
-    
-    const userPhoto = this.getUserPhoto();
-    const avatarElement = document.getElementById('homeUserAvatar');
-    const placeholder = document.getElementById('homeUserAvatarPlaceholder');
-    
-    if (userPhoto) {
-      avatarElement.src = userPhoto.data;
-      avatarElement.style.display = 'block';
-      placeholder.style.display = 'none';
-    } else {
-      avatarElement.style.display = 'none';
-      placeholder.style.display = 'flex';
-      placeholder.textContent = this.currentUser.username.charAt(0).toUpperCase();
-    }
-    
-    document.getElementById('greetingText').textContent = this.getGreetingWithTitle();
-    document.getElementById('userInfo').textContent = `${this.currentUser.role} - تاريخ البدء: ${this.currentUser.firstWorkDay}`;
-    
-    this.updateTodayAttendance();
-    this.updateTodayStats();
-  }
-  
-  updateProfilePage() {
-    if (!this.currentUser) return;
-    
-    const userPhoto = this.getUserPhoto();
-    const avatarElement = document.getElementById('profileAvatar');
-    const placeholder = document.getElementById('profileAvatarPlaceholder');
-    
-    if (userPhoto) {
-      avatarElement.src = userPhoto.data;
-      avatarElement.style.display = 'block';
-      placeholder.style.display = 'none';
-    } else {
-      avatarElement.style.display = 'none';
-      placeholder.style.display = 'flex';
-      placeholder.textContent = this.currentUser.username.charAt(0).toUpperCase();
-    }
-    
-    document.getElementById('profileUsername').textContent = this.currentUser.username;
-    document.getElementById('profileRole').textContent = this.currentUser.role;
-    document.getElementById('profileStartDate').textContent = this.currentUser.firstWorkDay;
-    document.getElementById('profilePhone').textContent = this.currentUser.phone;
-    document.getElementById('profileRegisterDate').textContent = 
-      new Date(this.currentUser.registerDate).toLocaleDateString('ar-SA');
-    
-    const attendanceDays = this.attendanceRecords.filter(record => 
-      record.userId === this.currentUser.id && record.status === 'present'
-    ).length;
-    
-    const totalHours = this.attendanceRecords
-      .filter(record => record.userId === this.currentUser.id)
-      .reduce((sum, record) => sum + parseFloat(record.hours || 0), 0);
-    
-    document.getElementById('profileAttendanceDays').textContent = attendanceDays;
-    document.getElementById('profileTotalHours').textContent = totalHours.toFixed(2);
-  }
-  
-  // ======================= إدارة الحضور المحسنة =======================
+  // ======================= نظام تسجيل الحضور =======================
   checkIn() {
     if (!this.currentUser) {
       this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
@@ -2112,7 +2053,8 @@ class WorkScheduleAttendanceSystem {
         checkIn: time,
         checkOut: null,
         hours: 0,
-        status: 'present'
+        status: 'present',
+        isShift: this.getDayType(new Date()) === 'work'
       };
       this.attendanceRecords.push(record);
     }
@@ -2168,14 +2110,35 @@ class WorkScheduleAttendanceSystem {
       return;
     }
     
+    // حساب ساعات العمل مع مراعاة أن الدوام يمتد للصباح التالي
     const checkInTime = new Date(`${today}T${record.checkIn}`);
-    const checkOutTime = now;
-    const hours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
+    const checkOutTime = new Date(`${today}T${time}`);
     
-    if (hours < 0.016) {
-      if (!confirm('المدة بين الحضور والمغادرة أقل من دقيقة. هل أنت متأكد من تسجيل المغادرة؟')) {
+    let hours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
+    
+    // إذا كانت المغادرة قبل الساعة 7 صباحاً، فهي تابعة ليوم العمل السابق
+    if (checkOutTime.getHours() < 7) {
+      // أضف 24 ساعة لأن الدوام يمتد إلى اليوم التالي
+      const nextDay = new Date(checkOutTime);
+      nextDay.setDate(nextDay.getDate() + 1);
+      nextDay.setHours(7, 0, 0, 0);
+      
+      hours = (nextDay - checkInTime) / (1000 * 60 * 60);
+    }
+    
+    // الحد الأدنى للدوام (ساعة واحدة)
+    const minHours = 1;
+    if (hours < minHours) {
+      if (!confirm(`المدة بين الحضور والمغادرة ${hours.toFixed(2)} ساعة فقط. هل أنت متأكد من تسجيل المغادرة؟`)) {
         return;
       }
+    }
+    
+    // الحد الأقصى للدوام (24 ساعة)
+    const maxHours = 24;
+    if (hours > maxHours) {
+      hours = maxHours;
+      this.showAlert('تم تعديل عدد الساعات إلى 24 ساعة كحد أقصى', 'warning');
     }
     
     record.checkOut = time;
@@ -2254,228 +2217,207 @@ class WorkScheduleAttendanceSystem {
     document.getElementById('attendanceRate').textContent = `${attendanceRate}%`;
   }
   
-  // ======================= وظائف التصحيح =======================
-  correctTodayAttendance() {
-    if (!this.currentUser) {
-      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
+  // ======================= إدارة المستخدمين =======================
+  registerNewUser() {
+    const username = document.getElementById('newUsername').value.trim();
+    const role = document.getElementById('newRole').value;
+    const firstWorkDay = document.getElementById('newFirstWorkDay').value;
+    const phone = document.getElementById('newPhone').value.trim();
+    
+    if (!username || !role || !firstWorkDay) {
+      this.showAlert('يرجى تعبئة جميع الحقول الإلزامية', 'danger');
       return;
     }
     
-    const today = this.getTodayDate();
-    const recordIndex = this.attendanceRecords.findIndex(record => 
-      record.date === today && record.userId === this.currentUser.id
-    );
-    
-    if (recordIndex === -1) {
-      this.showAlert('لا يوجد سجل حضور لهذا اليوم', 'warning');
+    if (this.users.some(user => user.username === username)) {
+      this.showAlert('اسم المستخدم موجود مسبقاً', 'warning');
       return;
     }
     
-    const record = this.attendanceRecords[recordIndex];
+    const userId = `user_${Date.now()}`;
     
-    const newCheckIn = prompt('تعديل وقت الحضور (hh:mm):', record.checkIn || '08:00');
-    const newCheckOut = prompt('تعديل وقت المغادرة (hh:mm):', record.checkOut || '');
+    const newUser = {
+      id: userId,
+      username,
+      role,
+      firstWorkDay,
+      phone: phone || 'غير محدد',
+      registerDate: new Date().toISOString(),
+      isActive: true,
+      profilePhotoId: null
+    };
     
-    if (newCheckIn) {
-      if (!this.isValidTime(newCheckIn)) {
-        this.showAlert('وقت الحضور غير صحيح', 'danger');
-        return;
-      }
-      record.checkIn = newCheckIn;
-    }
+    this.users.push(newUser);
+    this.currentUser = newUser;
     
-    if (newCheckOut) {
-      if (!this.isValidTime(newCheckOut)) {
-        this.showAlert('وقت المغادرة غير صحيح', 'danger');
-        return;
-      }
-      record.checkOut = newCheckOut;
-      
-      if (record.checkIn) {
-        const checkInTime = new Date(`${today}T${record.checkIn}`);
-        const checkOutTime = new Date(`${today}T${record.checkOut}`);
-        const hours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
-        record.hours = hours.toFixed(2);
-      }
+    // تعيين تاريخ بداية الدواء تلقائياً كأول يوم عمل
+    this.setWorkStartDate(this.parseDate(firstWorkDay));
+    
+    const photoInput = document.getElementById('registerPhotoInput');
+    if (photoInput.files && photoInput.files[0]) {
+      this.addUserPhoto(photoInput.files[0])
+        .then(() => {
+          this.finalizeRegistration();
+        })
+        .catch(() => {
+          this.finalizeRegistration();
+        });
     } else {
-      record.checkOut = null;
-      record.hours = 0;
+      this.finalizeRegistration();
+    }
+  }
+  
+  finalizeRegistration() {
+    this.saveAllData();
+    this.updateUsersDropdown();
+    
+    document.getElementById('newUsername').value = '';
+    document.getElementById('newPhone').value = '';
+    const preview = document.getElementById('registerPhotoPreview');
+    preview.innerHTML = '<span class="icon icon-camera"></span>';
+    
+    this.showAlert(`تم تسجيل المستخدم ${this.currentUser.username} بنجاح`, 'success');
+    this.showPage('home');
+    this.updateHomePage();
+  }
+  
+  async addUserPhoto(file) {
+    if (!this.currentUser) return null;
+    
+    try {
+      const compressedImage = await this.compressImage(file);
+      
+      const photoId = `photo_${Date.now()}`;
+      const photo = {
+        id: photoId,
+        userId: this.currentUser.id,
+        data: compressedImage,
+        uploadDate: new Date().toISOString()
+      };
+      
+      this.userPhotos[this.currentUser.id] = photo;
+      this.currentUser.profilePhotoId = photoId;
+      this.updateUser(this.currentUser);
+      
+      this.saveAllData();
+      return photo;
+      
+    } catch (error) {
+      console.error('خطأ في معالجة الصورة:', error);
+      return null;
+    }
+  }
+  
+  compressImage(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          const maxSize = 150;
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > height) {
+            if (width > maxSize) {
+              height *= maxSize / width;
+              width = maxSize;
+            }
+          } else {
+            if (height > maxSize) {
+              width *= maxSize / height;
+              height = maxSize;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+          resolve(compressedBase64);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+  
+  getUserPhoto(userId = null) {
+    const targetUserId = userId || (this.currentUser ? this.currentUser.id : null);
+    if (!targetUserId || !this.userPhotos[targetUserId]) return null;
+    
+    return this.userPhotos[targetUserId];
+  }
+  
+  updateUser(user) {
+    const index = this.users.findIndex(u => u.id === user.id);
+    if (index !== -1) {
+      this.users[index] = user;
+      this.saveAllData();
+    }
+  }
+  
+  updateHomePage() {
+    if (!this.currentUser) return;
+    
+    const userPhoto = this.getUserPhoto();
+    const avatarElement = document.getElementById('homeUserAvatar');
+    const placeholder = document.getElementById('homeUserAvatarPlaceholder');
+    
+    if (userPhoto) {
+      avatarElement.src = userPhoto.data;
+      avatarElement.style.display = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      avatarElement.style.display = 'none';
+      placeholder.style.display = 'flex';
+      placeholder.textContent = this.currentUser.username.charAt(0).toUpperCase();
     }
     
-    this.attendanceRecords[recordIndex] = record;
-    this.saveAllData();
+    document.getElementById('greetingText').textContent = this.getGreetingWithTitle();
+    document.getElementById('userInfo').textContent = `${this.currentUser.role} - تاريخ البدء: ${this.currentUser.firstWorkDay}`;
     
-    this.showAlert('تم تصحيح السجل بنجاح', 'success');
     this.updateTodayAttendance();
     this.updateTodayStats();
   }
   
-  isValidTime(timeString) {
-    const regex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-    return regex.test(timeString);
-  }
-  
-  deleteTodayRecord() {
-    if (!this.currentUser) {
-      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
-      return;
-    }
-    
-    const today = this.getTodayDate();
-    const recordIndex = this.attendanceRecords.findIndex(record => 
-      record.date === today && record.userId === this.currentUser.id
-    );
-    
-    if (recordIndex === -1) {
-      this.showAlert('لا يوجد سجل حضور لهذا اليوم', 'warning');
-      return;
-    }
-    
-    if (!confirm('هل أنت متأكد من حذف سجل اليوم؟')) {
-      return;
-    }
-    
-    this.attendanceRecords.splice(recordIndex, 1);
-    this.saveAllData();
-    
-    document.getElementById('checkInTime').textContent = '-';
-    document.getElementById('checkOutTime').textContent = '-';
-    document.getElementById('checkInBtn').disabled = false;
-    document.getElementById('checkOutBtn').disabled = true;
-    document.getElementById('attendanceStatus').textContent = 'لم يتم تسجيل الحضور اليوم';
-    document.getElementById('attendanceStatus').style.color = '';
-    document.getElementById('todayHours').textContent = '0';
-    
-    this.showAlert('تم حذف سجل اليوم بنجاح', 'success');
-    this.updateTodayStats();
-    this.updateAttendanceTable();
-  }
-  
-  // ======================= دوال مساعدة =======================
-  getGreeting() {
+  getGreetingWithTitle() {
     const hour = new Date().getHours();
-    if (hour < 12) return 'صباح الخير';
-    if (hour < 18) return 'مساء الخير';
-    return 'مساء الخير';
-  }
-  
-  getTodayDate() {
-    return new Date().toISOString().split('T')[0];
-  }
-  
-  formatDate(date) {
-    if (typeof date === 'string') return date;
-    return date.toISOString().split('T')[0];
-  }
-  
-  // ======================= وظائف أخرى =======================
-  saveOvertime() {
-    if (!this.currentUser) {
-      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
-      return;
+    let greeting = '';
+    
+    if (hour < 12) {
+      greeting = 'صباح الخير';
+    } else if (hour < 18) {
+      greeting = 'مساء الخير';
+    } else {
+      greeting = 'مساء الخير';
     }
     
-    const date = document.getElementById('otDate').value;
-    const hours = document.getElementById('otHours').value;
-    const type = document.getElementById('otType').value;
-    
-    if (!date || !hours) {
-      this.showAlert('يرجى تعبئة جميع الحقول', 'danger');
-      return;
-    }
-    
-    this.overtimeRecords.push({
-      id: Date.now(),
-      userId: this.currentUser.id,
-      date,
-      hours: parseFloat(hours),
-      type,
-      timestamp: new Date().toISOString()
-    });
-    
-    this.saveAllData();
-    
-    document.getElementById('otDate').value = this.getTodayDate();
-    document.getElementById('otHours').value = '';
-    
-    this.showAlert('تم إضافة الوقت الإضافي بنجاح', 'success');
-  }
-  
-  updateAttendanceTable() {
-    if (!this.currentUser) return;
-    
-    const tableBody = document.getElementById('attendanceTableBody');
-    const noAttendance = document.getElementById('noAttendance');
-    
-    tableBody.innerHTML = '';
-    
-    const userRecords = this.attendanceRecords
-      .filter(record => record.userId === this.currentUser.id)
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    if (userRecords.length === 0) {
-      tableBody.classList.add('hidden');
-      noAttendance.classList.remove('hidden');
-      return;
-    }
-    
-    tableBody.classList.remove('hidden');
-    noAttendance.classList.add('hidden');
-    
-    userRecords.forEach(record => {
-      const row = document.createElement('tr');
-      row.classList.add(record.status === 'present' ? 'present' : 'absent');
-      
-      const dayName = new Date(record.date).toLocaleDateString('ar-SA', { weekday: 'long' });
-      
-      row.innerHTML = `
-        <td>${record.date}</td>
-        <td>${dayName}</td>
-        <td>${record.checkIn || '-'}</td>
-        <td>${record.checkOut || '-'}</td>
-        <td>${record.hours || 0} ساعة</td>
-        <td>
-          <span class="${record.status === 'present' ? 'workday' : 'holiday'}">
-            ${record.status === 'present' ? 'حاضر' : 'غائب'}
-          </span>
-        </td>
-        <td>
-          <button class="btn-sm btn-warning" onclick="app.editAttendanceRecord(${record.id})">✏️</button>
-        </td>
-      `;
-      
-      tableBody.appendChild(row);
-    });
-  }
-  
-  editAttendanceRecord(recordId) {
-    const record = this.attendanceRecords.find(r => r.id === recordId);
-    if (!record) return;
-    
-    const newCheckIn = prompt('تعديل وقت الحضور:', record.checkIn);
-    const newCheckOut = prompt('تعديل وقت المغادرة:', record.checkOut);
-    
-    if (newCheckIn && this.isValidTime(newCheckIn)) {
-      record.checkIn = newCheckIn;
-    }
-    
-    if (newCheckOut && this.isValidTime(newCheckOut)) {
-      record.checkOut = newCheckOut;
-      
-      if (record.checkIn) {
-        const checkInTime = new Date(`${record.date}T${record.checkIn}`);
-        const checkOutTime = new Date(`${record.date}T${record.checkOut}`);
-        const hours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
-        record.hours = hours.toFixed(2);
+    if (this.currentUser) {
+      const role = this.currentUser.role;
+      switch(role) {
+        case 'مهندس':
+          return `${greeting} مهندس ${this.currentUser.username}`;
+        case 'فني':
+          return `${greeting} فني ${this.currentUser.username}`;
+        case 'مسؤول شفت':
+          return `${greeting} مسؤول الشفت ${this.currentUser.username}`;
+        case 'مسؤول قسم IT':
+          return `${greeting} مسؤول IT ${this.currentUser.username}`;
+        default:
+          return `${greeting} ${this.currentUser.username}`;
       }
     }
-    
-    this.saveAllData();
-    this.updateAttendanceTable();
-    this.showAlert('تم تعديل السجل بنجاح', 'success');
+    return greeting;
   }
   
-  // ======================= إدارة المستخدمين =======================
+  // ======================= واجهة المستخدم =======================
   loginUser() {
     const userId = document.getElementById('userSelect').value;
     
@@ -2568,6 +2510,7 @@ class WorkScheduleAttendanceSystem {
         break;
       case 'calendar':
         this.generateMonthCalendar();
+        this.updateStartDateInfo();
         break;
       case 'profile':
         this.updateProfilePage();
@@ -2641,6 +2584,209 @@ class WorkScheduleAttendanceSystem {
     }
   }
   
+  // ======================= الملف الشخصي =======================
+  updateProfilePage() {
+    if (!this.currentUser) return;
+    
+    const userPhoto = this.getUserPhoto();
+    const avatarElement = document.getElementById('profileAvatar');
+    const placeholder = document.getElementById('profileAvatarPlaceholder');
+    
+    if (userPhoto) {
+      avatarElement.src = userPhoto.data;
+      avatarElement.style.display = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      avatarElement.style.display = 'none';
+      placeholder.style.display = 'flex';
+      placeholder.textContent = this.currentUser.username.charAt(0).toUpperCase();
+    }
+    
+    document.getElementById('profileUsername').textContent = this.currentUser.username;
+    document.getElementById('profileRole').textContent = this.currentUser.role;
+    document.getElementById('profileStartDate').textContent = this.currentUser.firstWorkDay;
+    document.getElementById('profilePhone').textContent = this.currentUser.phone;
+    document.getElementById('profileRegisterDate').textContent = 
+      new Date(this.currentUser.registerDate).toLocaleDateString('ar-SA');
+    
+    const attendanceDays = this.attendanceRecords.filter(record => 
+      record.userId === this.currentUser.id && record.status === 'present'
+    ).length;
+    
+    const totalHours = this.attendanceRecords
+      .filter(record => record.userId === this.currentUser.id)
+      .reduce((sum, record) => sum + parseFloat(record.hours || 0), 0);
+    
+    document.getElementById('profileAttendanceDays').textContent = attendanceDays;
+    document.getElementById('profileTotalHours').textContent = totalHours.toFixed(2);
+  }
+  
+  // ======================= جدول الحضور =======================
+  updateAttendanceTable() {
+    if (!this.currentUser) return;
+    
+    const tableBody = document.getElementById('attendanceTableBody');
+    const noAttendance = document.getElementById('noAttendance');
+    
+    tableBody.innerHTML = '';
+    
+    const userRecords = this.attendanceRecords
+      .filter(record => record.userId === this.currentUser.id)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    if (userRecords.length === 0) {
+      tableBody.classList.add('hidden');
+      noAttendance.classList.remove('hidden');
+      return;
+    }
+    
+    tableBody.classList.remove('hidden');
+    noAttendance.classList.add('hidden');
+    
+    userRecords.forEach(record => {
+      const row = document.createElement('tr');
+      row.classList.add(record.status === 'present' ? 'present' : 'absent');
+      
+      const dayName = new Date(record.date).toLocaleDateString('ar-SA', { weekday: 'long' });
+      
+      row.innerHTML = `
+        <td>${record.date}</td>
+        <td>${dayName}</td>
+        <td>${record.checkIn || '-'}</td>
+        <td>${record.checkOut || '-'}</td>
+        <td>${record.hours || 0} ساعة</td>
+        <td>
+          <span class="${record.status === 'present' ? 'workday' : 'holiday'}">
+            ${record.status === 'present' ? 'حاضر' : 'غائب'}
+          </span>
+        </td>
+        <td>
+          <button class="btn-sm btn-warning" onclick="app.editAttendanceRecord(${record.id})">✏️</button>
+        </td>
+      `;
+      
+      tableBody.appendChild(row);
+    });
+  }
+  
+  editAttendanceRecord(recordId) {
+    const record = this.attendanceRecords.find(r => r.id === recordId);
+    if (!record) return;
+    
+    const newCheckIn = prompt('تعديل وقت الحضور:', record.checkIn);
+    const newCheckOut = prompt('تعديل وقت المغادرة:', record.checkOut);
+    
+    if (newCheckIn && this.isValidTime(newCheckIn)) {
+      record.checkIn = newCheckIn;
+    }
+    
+    if (newCheckOut && this.isValidTime(newCheckOut)) {
+      record.checkOut = newCheckOut;
+      
+      if (record.checkIn) {
+        const checkInTime = new Date(`${record.date}T${record.checkIn}`);
+        const checkOutTime = new Date(`${record.date}T${record.checkOut}`);
+        const hours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
+        record.hours = hours.toFixed(2);
+      }
+    }
+    
+    this.saveAllData();
+    this.updateAttendanceTable();
+    this.showAlert('تم تعديل السجل بنجاح', 'success');
+  }
+  
+  isValidTime(timeString) {
+    const regex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    return regex.test(timeString);
+  }
+  
+  // ======================= التصحيح والحذف =======================
+  correctTodayAttendance() {
+    if (!this.currentUser) {
+      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
+      return;
+    }
+    
+    const today = this.getTodayDate();
+    const recordIndex = this.attendanceRecords.findIndex(record => 
+      record.date === today && record.userId === this.currentUser.id
+    );
+    
+    if (recordIndex === -1) {
+      this.showAlert('لا يوجد سجل حضور لهذا اليوم', 'warning');
+      return;
+    }
+    
+    const record = this.attendanceRecords[recordIndex];
+    
+    const newCheckIn = prompt('تعديل وقت الحضور (hh:mm):', record.checkIn || '08:00');
+    const newCheckOut = prompt('تعديل وقت المغادرة (hh:mm):', record.checkOut || '');
+    
+    if (newCheckIn) {
+      if (!this.isValidTime(newCheckIn)) {
+        this.showAlert('وقت الحضور غير صحيح', 'danger');
+        return;
+      }
+      record.checkIn = newCheckIn;
+    }
+    
+    if (newCheckOut) {
+      if (!this.isValidTime(newCheckOut)) {
+        this.showAlert('وقت المغادرة غير صحيح', 'danger');
+        return;
+      }
+      record.checkOut = newCheckOut;
+      
+      if (record.checkIn) {
+        const checkInTime = new Date(`${today}T${record.checkIn}`);
+        const checkOutTime = new Date(`${today}T${record.checkOut}`);
+        const hours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
+        record.hours = hours.toFixed(2);
+      }
+    } else {
+      record.checkOut = null;
+      record.hours = 0;
+    }
+    
+    this.attendanceRecords[recordIndex] = record;
+    this.saveAllData();
+    
+    this.showAlert('تم تصحيح السجل بنجاح', 'success');
+    this.updateTodayAttendance();
+    this.updateTodayStats();
+  }
+  
+  deleteTodayRecord() {
+    if (!this.currentUser) {
+      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
+      return;
+    }
+    
+    const today = this.getTodayDate();
+    const recordIndex = this.attendanceRecords.findIndex(record => 
+      record.date === today && record.userId === this.currentUser.id
+    );
+    
+    if (recordIndex === -1) {
+      this.showAlert('لا يوجد سجل حضور لهذا اليوم', 'warning');
+      return;
+    }
+    
+    if (!confirm('هل أنت متأكد من حذف سجل اليوم؟')) {
+      return;
+    }
+    
+    this.attendanceRecords.splice(recordIndex, 1);
+    this.saveAllData();
+    
+    this.showAlert('تم حذف سجل اليوم بنجاح', 'success');
+    this.updateTodayAttendance();
+    this.updateTodayStats();
+    this.updateAttendanceTable();
+  }
+  
+  // ======================= الإعدادات =======================
   updateSettingsPage() {
     document.getElementById('darkModeToggle').checked = this.settings.darkMode;
     document.getElementById('notificationsToggle').checked = this.settings.notifications;
@@ -2649,6 +2795,7 @@ class WorkScheduleAttendanceSystem {
     document.getElementById('reminderTime').value = this.settings.reminderTime;
   }
   
+  // ======================= المستخدمين =======================
   loadUsersList() {
     const container = document.getElementById('usersListContainer');
     const noUsers = document.getElementById('noUsers');
@@ -2714,27 +2861,53 @@ class WorkScheduleAttendanceSystem {
     }
   }
   
-  resetAllData() {
-    if (!confirm('⚠️ تحذير: هل أنت متأكد من مسح جميع البيانات؟\nهذا الإجراء لا يمكن التراجع عنه.')) return;
+  // ======================= تعيين دورة العمل =======================
+  setWorkCycle() {
+    if (!this.currentUser || !this.selectedDate) {
+      this.showAlert('يرجى اختيار تاريخ بداية أولاً', 'warning');
+      return;
+    }
     
-    localStorage.clear();
-    this.users = [];
-    this.currentUser = null;
-    this.attendanceRecords = [];
-    this.overtimeRecords = [];
-    this.workSchedule = {};
-    this.userPhotos = {};
-    this.settings = { 
-      darkMode: false, 
-      notifications: true, 
-      attendanceReminder: true,
-      confirmCheckout: true,
-      reminderTime: '08:00'
-    };
+    const startDate = this.parseDate(this.selectedDate);
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 20); // 3 أسابيع تقريباً
     
-    this.showPage('userSelection');
-    this.updateUsersDropdown();
-    this.showAlert('تم مسح جميع البيانات', 'info');
+    if (confirm(`هل تريد تعيين جدول الدوام من ${this.selectedDate} إلى ${this.formatDate(endDate)} (نظام: يوم عمل ← يومين راحة)؟`)) {
+      this.applyWorkCycle(startDate, endDate);
+    }
+  }
+  
+  applyWorkCycle(startDate, endDate) {
+    if (!this.currentUser) return;
+    
+    const userId = this.currentUser.id;
+    
+    if (!this.workSchedule[userId]) {
+      this.workSchedule[userId] = {};
+    }
+    
+    let dayCount = 0;
+    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+      const dateStr = this.formatDate(date);
+      // حساب الأيام من تاريخ البدء
+      const startDateObj = this.getWorkStartDate();
+      const diffTime = date - startDateObj;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      let isWorkDay = false;
+      if (diffDays >= 0) {
+        // النظام: يوم عمل واحد، يومين عطلة (دورة كل 3 أيام)
+        const cycleDay = diffDays % 3; // 0,1,2
+        isWorkDay = cycleDay === 0;
+      }
+      
+      this.workSchedule[userId][dateStr] = isWorkDay ? 'work' : 'holiday';
+      dayCount++;
+    }
+    
+    this.saveAllData();
+    this.generateMonthCalendar();
+    this.showAlert(`تم تعيين جدول دوام ${dayCount} يوم بنجاح (يوم عمل ← يومين راحة) بدءاً من ${this.formatDate(startDate)}`, 'success');
   }
   
   // ======================= الأحداث =======================
@@ -2798,9 +2971,9 @@ class WorkScheduleAttendanceSystem {
         this.showAlert('يرجى اختيار تاريخ أولاً', 'warning');
         return;
       }
-      const date = new Date(this.selectedDate);
+      const date = this.parseDate(this.selectedDate);
       this.setWorkDay(date, true);
-      this.showAlert('تم تعيين اليوم كيوم دوام', 'success');
+      this.showAlert('✅ تم تعيين اليوم كيوم دوام', 'success');
     });
     
     document.getElementById('setHolidayBtn').addEventListener('click', () => {
@@ -2808,9 +2981,37 @@ class WorkScheduleAttendanceSystem {
         this.showAlert('يرجى اختيار تاريخ أولاً', 'warning');
         return;
       }
-      const date = new Date(this.selectedDate);
+      const date = this.parseDate(this.selectedDate);
       this.setWorkDay(date, false);
-      this.showAlert('تم تعيين اليوم كيوم عطلة', 'success');
+      this.showAlert('✅ تم تعيين اليوم كيوم عطلة', 'success');
+    });
+    
+    document.getElementById('setWorkCycleBtn').addEventListener('click', () => this.setWorkCycle());
+    document.getElementById('setStartDateBtn').addEventListener('click', () => {
+      if (!this.selectedDate) {
+        this.showAlert('يرجى اختيار تاريخ البدء أولاً', 'warning');
+        return;
+      }
+      const date = this.parseDate(this.selectedDate);
+      this.setWorkStartDate(date);
+    });
+    
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      this.currentMonth--;
+      if (this.currentMonth < 0) {
+        this.currentMonth = 11;
+        this.currentYear--;
+      }
+      this.generateMonthCalendar();
+    });
+    
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      this.currentMonth++;
+      if (this.currentMonth > 11) {
+        this.currentMonth = 0;
+        this.currentYear++;
+      }
+      this.generateMonthCalendar();
     });
     
     document.getElementById('saveOTBtn').addEventListener('click', () => this.saveOvertime());
@@ -2832,24 +3033,6 @@ class WorkScheduleAttendanceSystem {
           this.updateHomePage();
         }
       }
-    });
-    
-    document.getElementById('prevMonth').addEventListener('click', () => {
-      this.currentMonth--;
-      if (this.currentMonth < 0) {
-        this.currentMonth = 11;
-        this.currentYear--;
-      }
-      this.generateMonthCalendar();
-    });
-    
-    document.getElementById('nextMonth').addEventListener('click', () => {
-      this.currentMonth++;
-      if (this.currentMonth > 11) {
-        this.currentMonth = 0;
-        this.currentYear++;
-      }
-      this.generateMonthCalendar();
     });
     
     document.getElementById('notificationsToggle')?.addEventListener('change', (e) => {
@@ -2890,13 +3073,44 @@ class WorkScheduleAttendanceSystem {
     document.getElementById('generateReport').addEventListener('click', () => this.generateReport());
     document.getElementById('exportReport').addEventListener('click', () => this.exportReport());
     
-    // ضبط القائمة السفلية عند تغيير حجم النافذة
     window.addEventListener('resize', () => {
       this.adjustBottomNav();
     });
   }
   
   // ======================= وظائف إضافية =======================
+  saveOvertime() {
+    if (!this.currentUser) {
+      this.showAlert('يرجى تسجيل الدخول أولاً', 'danger');
+      return;
+    }
+    
+    const date = document.getElementById('otDate').value;
+    const hours = document.getElementById('otHours').value;
+    const type = document.getElementById('otType').value;
+    
+    if (!date || !hours) {
+      this.showAlert('يرجى تعبئة جميع الحقول', 'danger');
+      return;
+    }
+    
+    this.overtimeRecords.push({
+      id: Date.now(),
+      userId: this.currentUser.id,
+      date,
+      hours: parseFloat(hours),
+      type,
+      timestamp: new Date().toISOString()
+    });
+    
+    this.saveAllData();
+    
+    document.getElementById('otDate').value = this.getTodayDate();
+    document.getElementById('otHours').value = '';
+    
+    this.showAlert('تم إضافة الوقت الإضافي بنجاح', 'success');
+  }
+  
   exportUserData() {
     if (!this.currentUser) return;
     
@@ -2905,6 +3119,7 @@ class WorkScheduleAttendanceSystem {
       attendance: this.attendanceRecords.filter(r => r.userId === this.currentUser.id),
       overtime: this.overtimeRecords.filter(r => r.userId === this.currentUser.id),
       workSchedule: this.workSchedule[this.currentUser.id] || {},
+      workStartDate: this.workStartDates[this.currentUser.id] || this.currentUser.firstWorkDay,
       exportDate: new Date().toISOString()
     };
     
@@ -2958,6 +3173,10 @@ class WorkScheduleAttendanceSystem {
             
             this.workSchedule[data.user.id] = data.workSchedule;
             
+            if (data.workStartDate) {
+              this.workStartDates[data.user.id] = data.workStartDate;
+            }
+            
             this.saveAllData();
             this.updateHomePage();
             this.showAlert('تم استيراد البيانات بنجاح', 'success');
@@ -2978,6 +3197,7 @@ class WorkScheduleAttendanceSystem {
       attendance: this.attendanceRecords,
       overtime: this.overtimeRecords,
       workSchedule: this.workSchedule,
+      workStartDates: this.workStartDates,
       userPhotos: this.userPhotos,
       settings: this.settings,
       backupDate: new Date().toISOString()
@@ -2994,6 +3214,30 @@ class WorkScheduleAttendanceSystem {
     linkElement.click();
     
     this.showAlert('تم إنشاء نسخة احتياطية بنجاح', 'success');
+  }
+  
+  resetAllData() {
+    if (!confirm('⚠️ تحذير: هل أنت متأكد من مسح جميع البيانات؟\nهذا الإجراء لا يمكن التراجع عنه.')) return;
+    
+    localStorage.clear();
+    this.users = [];
+    this.currentUser = null;
+    this.attendanceRecords = [];
+    this.overtimeRecords = [];
+    this.workSchedule = {};
+    this.workStartDates = {};
+    this.userPhotos = {};
+    this.settings = { 
+      darkMode: false, 
+      notifications: true, 
+      attendanceReminder: true,
+      confirmCheckout: true,
+      reminderTime: '08:00'
+    };
+    
+    this.showPage('userSelection');
+    this.updateUsersDropdown();
+    this.showAlert('تم مسح جميع البيانات', 'info');
   }
   
   generateReport() {
@@ -3037,7 +3281,7 @@ class WorkScheduleAttendanceSystem {
     }
     
     const userRecords = this.attendanceRecords.filter(record => {
-      const recordDate = new Date(record.date);
+      const recordDate = this.parseDate(record.date);
       return record.userId === this.currentUser.id && 
              recordDate >= fromDate && 
              recordDate <= toDate;
@@ -3081,6 +3325,8 @@ class WorkScheduleAttendanceSystem {
         <h4>ملخص التقرير:</h4>
         <p>الفترة: ${fromDate.toLocaleDateString('ar-SA')} إلى ${toDate.toLocaleDateString('ar-SA')}</p>
         <p>المستخدم: ${this.currentUser.username} (${this.currentUser.role})</p>
+        <p>نظام الدوام: يوم عمل ← يومين راحة</p>
+        <p>تاريخ بداية الدوام: ${this.formatDate(this.getWorkStartDate())}</p>
         <p>مجموع أيام الفترة: ${totalDays} يوم</p>
       </div>
     `;
@@ -3097,6 +3343,8 @@ class WorkScheduleAttendanceSystem {
 ==============
 المستخدم: ${this.currentUser.username}
 الدور: ${this.currentUser.role}
+نظام الدوام: يوم عمل ← يومين راحة
+تاريخ بداية الدوام: ${this.formatDate(this.getWorkStartDate())}
 تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}
 
 ${reportStats}
