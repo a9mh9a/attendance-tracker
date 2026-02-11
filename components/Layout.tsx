@@ -46,12 +46,12 @@ const Layout: React.FC<LayoutProps> = ({ children, currentView, setView, user, o
       </main>
 
       <nav className={`${isNight ? 'bg-slate-900 border-white/5' : 'bg-white border-slate-200'} border-t fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around p-2 z-10 shadow-2xl`}>
-        <NavItem active={currentView === 'dashboard'} onClick={() => setView('dashboard')} icon={<LayoutDashboard size={22} />} label="الرئيسية" isNight={isNight} />
-        <NavItem active={currentView === 'attendance'} onClick={() => setView('attendance')} icon={<ListChecks size={22} />} label="الحضور" isNight={isNight} />
-        <NavItem active={currentView === 'overtime'} onClick={() => setView('overtime')} icon={<Clock size={22} />} label="إضافي" isNight={isNight} />
-        <NavItem active={currentView === 'calendar'} onClick={() => setView('calendar')} icon={<Calendar size={22} />} label="الجدول" isNight={isNight} />
-        <NavItem active={currentView === 'reports'} onClick={() => setView('reports')} icon={<BarChart3 size={22} />} label="التقارير" isNight={isNight} />
-      </nav>
+ <NavItem active={currentView === 'dashboard'} onClick={() => setView('dashboard')} icon={<LayoutDashboard size={22} />} label="الرئيسية" isNight={isNight} />
+  <NavItem active={currentView === 'attendance'} onClick={() => setView('attendance')} icon={<ListChecks size={22} />} label="الحضور" isNight={isNight} />
+  <NavItem active={currentView === 'overtime'} onClick={() => setView('overtime')} icon={<Clock size={22} />} label="إضافي" isNight={isNight} />
+  <NavItem active={currentView === 'calendar'} onClick={() => setView('calendar')} icon={<Calendar size={22} />} label="الجدول" isNight={isNight} />
+  <NavItem active={currentView === 'reports'} onClick={() => setView('reports')} icon={<BarChart3 size={22} />} label="التقارير" isNight={isNight} />
+</nav>
     </div>
   );
 };
