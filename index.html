@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>مدير الدوام الذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; overscroll-behavior-y: contain; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .animate-spin-slow { animation: spin 8s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .pt-safe { padding-top: env(safe-area-inset-top); }
+        .view-transition { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-slate-50 text-slate-900 overflow-hidden">
+    <div id="root" class="h-screen flex flex-col"></div>
+
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "lucide-react": "https://esm.sh/lucide-react@0.463.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.4"
+  }
+}
+</script>
+
+    <script type="module">
+        import React, { useState, useEffect, useRef } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import * as Lucide from 'lucide-react';
+
+        // --- Core Business Logic ---
+        const DutyStatus = { WORK: 'work', OFF1: 'off1', OFF2: 'off2' };
+
+        const getDutyStatusAtDate = (startDate, targetDate) => {
+            const start = new Date(startDate);
+            start.setHours(7, 0, 0, 0);
+            const target = new Date(targetDate);
+            const diffTime = target.getTime() - start.getTime();
+            const cycleMs = 3 * 24 * 60 * 60 * 1000;
+            const dayMs = 24 * 60 * 60 * 1000;
+            if (diffTime < 0) return DutyStatus.OFF2;
+            const msInCycle = diffTime % cycleMs;
+            if (msInCycle < dayMs) return DutyStatus.WORK;
+            if (msInCycle < 2 * dayMs) return DutyStatus.OFF1;
+            return DutyStatus.OFF2;
+        };
+
+        const getTimeRemaining = (startDate, targetDate) => {
+            const start = new Date(startDate);
+            start.setHours(7, 0, 0, 0);
+            const target = new Date(targetDate);
+            const diffTime = target.getTime() - start.getTime();
+            const cycleMs = 3 * 24 * 60 * 60 * 1000;
+            const dayMs = 24 * 60 * 60 * 1000;
+            const status = getDutyStatusAtDate(startDate, targetDate);
+            const msInCycle = diffTime % cycleMs;
+            let rem = status === DutyStatus.WORK ? dayMs - msInCycle : cycleMs - msInCycle;
+            if (rem < 0) rem = 0;
+            return {
+                hours: Math.floor(rem / (1000 * 60 * 60)).toString().padStart(2, '0'),
+                minutes: Math.floor((rem / (1000 * 60)) % 60).toString().padStart(2, '0'),
+                seconds: Math.floor((rem / 1000) % 60).toString().padStart(2, '0')
+            };
+        };
+
+        // --- Sub-Components ---
+        const NavBtn = ({ active, onClick, icon, label }) => (
+            <button onClick={onClick} className={`flex flex-col items-center gap-1 p-2 transition-all duration-300 ${active ? 'text-indigo-600 scale-110' : 'text-slate-400'}`}>
+                {icon}
+                <span className="text-[8px] font-black">{label}</span>
+            </button>
+        );
+
+        const StatItem = ({ label, value, unit, icon, isNight }) => (
+            <div className={`p-5 rounded-3xl border flex flex-col items-center text-center shadow-sm ${isNight ? 'bg-slate-900 border-white/5' : 'bg-white border-slate-100'}`}>
+                <div className="mb-2 opacity-80">{icon}</div>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
+                <p className="text-xl font-black mt-1">{value} <span className="text-[10px] opacity-40">{unit}</span></p>
+            </div>
+        );
+
+        // --- Main App Component ---
+        const App = () => {
+            const [user, setUser] = useState(null);
+            const [view, setView] = useState('dashboard');
+            const [attendance, setAttendance] = useState([]);
+            const [overtime, setOvertime] = useState([]);
+            const [isLoaded, setIsLoaded] = useState(false);
+            const [countdown, setCountdown] = useState({ hours: '00', minutes: '00', seconds: '00' });
+
+            useEffect(() => {
+                const u = localStorage.getItem('duty_user');
+                const a = localStorage.getItem('duty_attendance');
+                const o = localStorage.getItem('duty_overtime');
+                if (u) setUser(JSON.parse(u));
+                if (a) setAttendance(JSON.parse(a));
+                if (o) setOvertime(JSON.parse(o));
+                setIsLoaded(true);
+            }, []);
+
+            useEffect(() => {
+                if (!user) return;
+                const timer = setInterval(() => {
+                    setCountdown(getTimeRemaining(user.startDate, new Date()));
+                }, 1000);
+                return () => clearInterval(timer);
+            }, [user]);
+
+            if (!isLoaded) return null;
+
+            // --- Onboarding Logic ---
+            if (!user) return (
+                <div className="h-full bg-slate-950 flex items-center justify-center p-6 text-right">
+                    <div className="bg-white rounded-[2.5rem] p-8 w-full max-w-sm shadow-2xl animate-in zoom-in duration-500">
+                        <div className="text-center mb-8">
+                            <h2 className="text-2xl font-black text-slate-800 tracking-tight">إعداد الحساب</h2>
+                            <p className="text-slate-400 text-xs font-bold mt-1">نظام الدوام (24/48)</p>
+                        </div>
+                        <form className="space-y-4" onSubmit={e => {
+                            e.preventDefault();
+                            const data = { 
+                                name: e.target.name.value, 
+                                jobTitle: e.target.job.value, 
+                                startDate: e.target.date.value, 
+                                theme: 'نهاري' 
+                            };
+                            localStorage.setItem('duty_user', JSON.stringify(data));
+                            setUser(data);
+                        }}>
+                            <input name="name" type="text" placeholder="الاسم الكامل" required className="w-full p-4 bg-slate-50 border-2 rounded-2xl font-bold focus:border-indigo-500 outline-none" />
+                            <select name="job" className="w-full p-4 bg-slate-50 border-2 rounded-2xl font-bold outline-none">
+                                <option>المهندس</option>
+                                <option>الفني</option>
+                            </select>
+                            <input name="date" type="date" required className="w-full p-4 bg-slate-50 border-2 rounded-2xl font-bold outline-none" />
+                            <button type="submit" className="w-full bg-indigo-600 text-white font-black py-4.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-all">دخول النظام</button>
+                        </form>
+                    </div>
+                </div>
+            );
+
+            const isNight = user.theme === 'ليلي';
+            const status = getDutyStatusAtDate(user.startDate, new Date());
+            const isWorking = status === DutyStatus.WORK;
+
+            const toggleTheme = () => {
+                const nu = { ...user, theme: isNight ? 'نهاري' : 'ليلي' };
+                setUser(nu); localStorage.setItem('duty_user', JSON.stringify(nu));
+            };
+
+            return (
+                <div className={`flex flex-col h-full max-w-md mx-auto relative transition-colors duration-500 ${isNight ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
+                    <header className={`${isNight ? 'bg-slate-900 border-white/5 shadow-black' : 'bg-indigo-900 border-indigo-800 shadow-indigo-500/10'} text-white p-5 sticky top-0 z-30 flex items-center justify-between border-b pt-safe shadow-lg`}>
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20"><Lucide.User size={20} /></div>
+                            <div>
+                                <h1 className="text-md font-black">{user.name}</h1>
+                                <p className="text-[8px] opacity-60 uppercase tracking-widest">{user.jobTitle} - 24/48</p>
+                            </div>
+                        </div>
+                        <button onClick={toggleTheme} className="p-3 rounded-2xl bg-white/10 active:scale-90 transition-transform">
+                            {isNight ? <Lucide.Sun size={20} /> : <Lucide.Moon size={20} />}
+                        </button>
+                    </header>
+
+                    <main className="flex-1 overflow-y-auto no-scrollbar p-5 space-y-6 pb-32">
+                        {view === 'dashboard' && (
+                            <div className="view-transition space-y-6">
+                                <div className={`p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden transition-all ${isWorking ? 'bg-indigo-600' : 'bg-slate-800'}`}>
+                                    <div className="relative z-10">
+                                        <div className="bg-white/10 w-fit p-3 rounded-2xl backdrop-blur-md mb-4">
+                                            {isWorking ? <Lucide.Compass className="animate-spin-slow" size={28} /> : <Lucide.Coffee size={28} />}
+                                        </div>
+                                        <h2 className="text-3xl font-black mb-1">{isWorking ? 'نوبة عمل نشطة' : status === DutyStatus.OFF1 ? 'إجازة خروج' : 'إجازة راحة'}</h2>
+                                        <p className="opacity-80 font-bold text-xs">الاستلام القادم: 07:00 ص</p>
+                                    </div>
+                                    <Lucide.ShieldCheck className="absolute -right-8 -bottom-8 text-white/10" size={160} />
+                                </div>
+
+                                <div className={`p-6 rounded-[2rem] border text-center ${isNight ? 'bg-slate-900 border-white/5' : 'bg-white border-slate-100'}`}>
+                                    <p className="text-slate-400 text-[9px] font-black uppercase mb-4 tracking-widest">الوقت المتبقي لانتهاء الحالة</p>
+                                    <div className="flex justify-center gap-4 font-mono" dir="ltr">
+                                        {[countdown.hours, countdown.minutes, countdown.seconds].map((v, i) => (
+                                            <div key={i} className="flex flex-col">
+                                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-black shadow-inner ${isNight ? 'bg-slate-800 text-indigo-400' : 'bg-slate-900 text-white'}`}>{v}</div>
+                                                <span className="text-[8px] font-black text-slate-500 mt-1 uppercase">{['ساعة','دقيقة','ثانية'][i]}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'attendance' && (
+                            <div className="view-transition space-y-4">
+                                <div className={`p-6 rounded-3xl border ${isNight ? 'bg-slate-900 border-white/5' : 'bg-white border-slate-100'}`}>
+                                    <h3 className="font-black text-lg mb-4 flex items-center gap-2"><Lucide.Fingerprint className="text-indigo-500" /> الحضور</h3>
+                                    {isWorking ? (
+                                        <button onClick={() => {
+                                            const today = new Date().toISOString().split('T')[0];
+                                            if (attendance.some(a => a.date === today)) return alert('سجلت حضورك مسبقاً');
+                                            const updated = [...attendance, { date: today, id: Date.now() }];
+                                            setAttendance(updated); localStorage.setItem('duty_attendance', JSON.stringify(updated));
+                                        }} className="w-full bg-emerald-600 text-white p-5 rounded-2xl font-black shadow-lg">تأكيد حضور نوبة اليوم</button>
+                                    ) : (
+                                        <div className="p-4 bg-amber-500/10 text-amber-500 rounded-2xl text-[10px] font-bold">لا يمكن تسجيل الحضور في وقت الإجازة.</div>
+                                    )}
+                                </div>
+                                {attendance.slice().reverse().map(r => (
+                                    <div key={r.id} className={`p-4 rounded-2xl border flex justify-between items-center ${isNight ? 'bg-slate-900/50 border-white/5' : 'bg-white border-slate-100'}`}>
+                                        <span className="font-bold">{r.date}</span>
+                                        <span className="text-[9px] font-black bg-emerald-500 text-white px-3 py-1 rounded-full">داومت</span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {view === 'overtime' && (
+                            <div className="view-transition space-y-4">
+                                <div className={`p-6 rounded-3xl border ${isNight ? 'bg-slate-900 border-white/5' : 'bg-white border-slate-100'}`}>
+                                    <h3 className="font-black text-lg mb-4">إضافة إضافي (OT)</h3>
+                                    <form onSubmit={e => {
+                                        e.preventDefault();
+                                        const h = e.target.hours.value;
+                                        if (h) {
+                                            const updated = [...overtime, { id: Date.now(), hours: parseFloat(h), date: new Date().toISOString().split('T')[0] }];
+                                            setOvertime(updated); localStorage.setItem('duty_overtime', JSON.stringify(updated));
+                                            e.target.reset();
+                                        }
+                                    }} className="space-y-3">
+                                        <input name="hours" type="number" step="0.5" placeholder="عدد الساعات" required className={`w-full p-4 rounded-xl border-2 ${isNight ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-100'}`} />
+                                        <button type="submit" className="w-full bg-amber-500 text-white p-4 rounded-xl font-black">إضافة السجل</button>
+                                    </form>
+                                </div>
+                                {overtime.slice().reverse().map(o => (
+                                    <div key={o.id} className={`p-4 rounded-2xl border flex justify-between items-center ${isNight ? 'bg-slate-900/50 border-white/5' : 'bg-white border-slate-100'}`}>
+                                        <div><p className="font-black">{o.hours} ساعة</p><p className="text-[10px] opacity-50">{o.date}</p></div>
+                                        <Lucide.Clock size={18} className="text-amber-500" />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {view === 'calendar' && (
+                            <div className="view-transition space-y-2">
+                                {Array.from({length: 12}).map((_, i) => {
+                                    const d = new Date(); d.setDate(d.getDate() + i);
+                                    const s = getDutyStatusAtDate(user.startDate, d);
+                                    const isW = s === DutyStatus.WORK;
+                                    return (
+                                        <div key={i} className={`p-4 rounded-2xl border flex justify-between items-center ${isNight ? 'bg-slate-900/50 border-white/5' : 'bg-white border-slate-100'} ${isW ? 'border-r-4 border-r-indigo-500' : ''}`}>
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-10 h-10 rounded-xl flex flex-col items-center justify-center font-black ${isW ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                                                    <span className="text-[8px] uppercase">{d.toLocaleDateString('ar-EG', {month: 'short'})}</span>
+                                                    <span className="text-md">{d.getDate()}</span>
+                                                </div>
+                                                <p className="font-black text-sm">{d.toLocaleDateString('ar-EG', {weekday: 'long'})}</p>
+                                            </div>
+                                            <span className={`text-[8px] font-black px-2 py-1 rounded-full ${isW ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-400'}`}>{isW ? 'دوام' : 'إجازة'}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+
+                        {view === 'reports' && (
+                            <div className="view-transition space-y-4">
+                                <div className="bg-slate-900 p-8 rounded-[2rem] text-white">
+                                    <h2 className="text-2xl font-black">ملخص الشهر</h2>
+                                    <p className="text-xs opacity-50">{new Date().toLocaleDateString('ar-EG', {month: 'long', year: 'numeric'})}</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <StatItem label="أيام الدوام" value={attendance.length} unit="يوم" icon={<Lucide.Briefcase size={20} />} isNight={isNight} />
+                                    <StatItem label="الإضافي" value={overtime.reduce((s, c) => s + c.hours, 0)} unit="ساعة" icon={<Lucide.Clock size={20} />} isNight={isNight} />
+                                </div>
+                                <button onClick={() => window.print()} className="w-full bg-slate-200 text-slate-800 p-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2"><Lucide.FileText size={18}/> تصدير التقرير</button>
+                            </div>
+                        )}
+                    </main>
+
+                    <nav className={`${isNight ? 'bg-slate-900/90 border-white/5' : 'bg-white/90 border-slate-200'} border-t fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around p-3 z-40 backdrop-blur-xl pb-safe shadow-2xl rounded-t-[2rem]`}>
+                        <NavBtn active={view === 'dashboard'} onClick={() => setView('dashboard')} icon={<Lucide.LayoutDashboard size={20}/>} label="الرئيسية" />
+                        <NavBtn active={view === 'attendance'} onClick={() => setView('attendance')} icon={<Lucide.CheckCircle size={20}/>} label="الحضور" />
+                        <NavBtn active={view === 'overtime'} onClick={() => setView('overtime')} icon={<Lucide.Timer size={20}/>} label="إضافي" />
+                        <NavBtn active={view === 'calendar'} onClick={() => setView('calendar')} icon={<Lucide.Calendar size={20}/>} label="الجدول" />
+                        <NavBtn active={view === 'reports'} onClick={() => setView('reports')} icon={<Lucide.BarChart3 size={20}/>} label="التقارير" />
+                    </nav>
+                </div>
+            );
+        };
+
+        createRoot(document.getElementById('root')).render(<App />);
+    </script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

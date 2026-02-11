@@ -1,0 +1,24 @@
+
+{
+  "short_name": "مدير الدوام",
+  "name": "مدير الدوام الذكي للمهندسين",
+  "description": "نظام تتبع الدوام 24/48 الاحترافي",
+  "icons": [
+    {
+      "src": "https://picsum.photos/192/192",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://picsum.photos/512/512",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#4f46e5",
+  "background_color": "#f8fafc",
+  "orientation": "portrait"
+}
