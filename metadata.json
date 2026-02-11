@@ -1,0 +1,7 @@
+{
+  "name": "Duty Manager PWA",
+  "description": "A comprehensive 24/48 work schedule manager (24h work + 2 days off) for professional duty tracking.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
